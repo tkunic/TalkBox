@@ -16,20 +16,23 @@ Hardware
 Setup Instructions
 ------------------
 
-```sudo apt-get install python-smbus i2c-tools python-dev python-pip
+``` bash
+sudo apt-get install python-smbus i2c-tools python-dev python-pip
 sudo apt-get update; sudo apt-get upgrade; sudo apt-get dist-upgrade
-sudo pip install evdev```
-
+sudo pip install evdev
+```
 open /etc/modules and add:
-```i2c-bcm2708
-i2c-dev```
+```
+i2c-bcm2708
+i2c-dev
+```
 
 open /etc/modprobe.d/raspi-blacklist.conf and comment out:
 
-```# blacklist i2c-bcm2708```
+`# blacklist i2c-bcm2708`
 
 and reboot. To test, run:
 
-```sudo i2cdetect -y 1```
+`sudo i2cdetect -y 1`
 
 
