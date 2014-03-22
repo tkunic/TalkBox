@@ -113,7 +113,7 @@ class PinsConf:
 class ConfWindow:
     def save_json(self, widget, data=None):
         # TODO make save instead of open, no copy-paste
-        chooser = gtk.FileChooserDialog("Save current configuration...",
+        chooser = gtk.FileChooserDialog("Save Configuration...",
                                         None,
                                         gtk.FILE_CHOOSER_ACTION_SAVE,
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_OK))
@@ -129,7 +129,22 @@ class ConfWindow:
         chooser.destroy()
     
     def load_json(self, widget, data=None):
-        pass
+        chooser = gtk.FileChooserDialog("Load Configuration...",
+                                        None,
+                                        gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+ 
+        chooser.set_current_folder(home)
+
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            filename = chooser.get_filename()
+
+        chooser.destroy()
+
+        new_conf = PinsConf()
+        new_conf.load(filename)
+        self.conf = new_conf
     
     def run_listener(self, widget, data=None):
         pass
