@@ -84,13 +84,15 @@ i2c-dev
 
 <p>Next, open /etc/modprobe.d/raspi-blacklist.conf (via <code>nano /etc/modprobe.d/raspi-blacklist.conf</code>) and comment out the following line by prepending <code>#</code> to it:</p>
 
-<p><code># blacklist i2c-bcm2708</code></p>
+<pre><code># blacklist i2c-bcm2708
+</code></pre>
 
 <p>and reboot.</p>
 
 <p>After connecting the MPR121 sensor, test if it is visible by running:</p>
 
-<p><code>sudo i2cdetect -y 1</code></p>
+<pre><code>sudo i2cdetect -y 1
+</code></pre>
 
 <blockquote>
 <p>FIXME You should see a field of zeros and a nonzero value</p>
