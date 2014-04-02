@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Talkbox by tkunic</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Talkbox</h1>
+        <p class="header">An assistive technology framework based on the MPR121 capacitive touch sensor and Raspberry Pi.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/tkunic/TalkBox/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/tkunic/TalkBox/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/tkunic/TalkBox">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/tkunic">tkunic</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="talkbox" class="anchor" href="#talkbox"><span class="octicon octicon-link"></span></a>TalkBox</h1>
+
+<p>The goal of the TalkBox project is to develop an open-source, open-hardware Speech Generating Device (aka "SGD"). The project has been undertaken by faculty and students from the GaMaY Lab, in the Lassonde School of Engineering at York University, in collaboration with community partners.</p>
+
+<p>Please find more information about our objectives at the <a href="http://talkbox.eecs.yorku.ca/?page_id=4804">project website</a>.</p>
+
+<p>The current iteration of the TalkBox is mostly used as a teaching aid for students with with cognitive, physical or developmental disabilities. It serves as a configurable, cheap and portable soundboard, and can help with learning the essentials of verbal communication.</p>
+
+<h2>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h2>
+
+<h3>
+<a name="hardware" class="anchor" href="#hardware"><span class="octicon octicon-link"></span></a>Hardware</h3>
+
+<p>The hardware necessary to make a TalkBox should cost you around $50. The following parts are necessary:</p>
+
+<ul>
+<li><a href="https://www.sparkfun.com/products/9695">MPR121 Capacitive Touch Sensor Breakout Board</a></li>
+<li><a href="http://www.raspberrypi.org/">Raspberry Pi</a></li>
+<li>A USB outlet or battery pack to power the device</li>
+<li>Some headers and wires</li>
+</ul><blockquote>
+<p>FIXME add picture of a finished TalkBox</p>
+</blockquote>
+
+<p>A MPR121 capacitive touch sensor board is used to create easy to operate buttons that require only touch but no pressure. The schematic can be found <a href="github.com/tkunic/TalkBox/schematic">here FIXME</a>. Each of the pins labelled 0-11 can be connected to a conductive pad (like a piece of aluminium foil) to create a button. The rest of the assembly process consists of plugging in 5 wires from the MPR121 to the Raspberry Pi. The design has been kept simple to facilitate activities where the students could participate in the assembly of their own devices.</p>
+
+<p>Some tips when assembling the device:</p>
+
+<ul>
+<li>The shorter the wires and the smaller the button pads the more reliably the device will fire. Please see above image for conventional setup.</li>
+<li>Be careful with battery packs, when they are almost out of charge the device may become unstable (garbled sound output, brownouts etc.). Try finding a battery pack capable of supplying at least 1 A of current, but unless you need portability, using wall power is recommended.</li>
+<li>In case of no audio, try running <code>sudo raspi-config</code> from the terminal and under Advanced Options force audio to 3.5mm. In case the volume is too low, use the <code>alsamixer</code> command and arrow keys to increase volume.</li>
+</ul><h3>
+<a name="software" class="anchor" href="#software"><span class="octicon octicon-link"></span></a>Software</h3>
+
+<p>You will need to install the TalkBox software onto a Raspberry Pi. Please begin by downloading the archive from one of the links in the sidebar to the Pi. Unpack the archive into your home directory (<code>/home/pi/</code>).</p>
+
+<p>Next, install the dependencies for TalkBox by running the following commands from a terminal (internet connection required):</p>
+
+<div class="highlight highlight-bash"><pre>sudo apt-get update<span class="p">;</span> sudo apt-get upgrade<span class="p">;</span> sudo apt-get dist-upgrade
+sudo apt-get install python-smbus i2c-tools python-dev python-pip
+sudo pip install evdev
+</pre></div>
+
+<p>Next, open /etc/modules (via <code>nano /etc/modules</code>) and add:</p>
+
+<pre><code>i2c-bcm2708
+i2c-dev
+</code></pre>
+
+<p>Next, open /etc/modprobe.d/raspi-blacklist.conf (via <code>nano /etc/modprobe.d/raspi-blacklist.conf</code>) and comment out the following line by prepending <code>#</code> to it:</p>
+
+<p><code># blacklist i2c-bcm2708</code></p>
+
+<p>and reboot.</p>
+
+<p>After connecting the MPR121 sensor, test if it is visible by running:</p>
+
+<p><code>sudo i2cdetect -y 1</code></p>
+
+<blockquote>
+<p>FIXME You should see a field of zeros and a nonzero value</p>
+</blockquote>
+
+<h2>
+<a name="use" class="anchor" href="#use"><span class="octicon octicon-link"></span></a>Use</h2>
+
+<p>To use TalkBox, run talkbox.py by double clicking it. A user interface should show up as below:</p>
+
+<p><img src="https://raw.githubusercontent.com/tkunic/TalkBox/feature_gui/docs/TalkBoxWindowMockup.png" alt="TalkBox GUI"></p>
+
+<blockquote>
+<p>FIXME add annotated screenshot of GUI instead of mockup</p>
+
+<p>FIXME explain daemon mode (headerless)</p>
+</blockquote>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
