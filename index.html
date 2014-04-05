@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Talkbox by GaMaY Lab</title>
+    <title>Talkbox by tkunic</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -52,9 +52,7 @@
 <li><a href="http://www.raspberrypi.org/">Raspberry Pi</a></li>
 <li>A USB outlet or battery pack to power the device</li>
 <li>Some headers and wires</li>
-</ul><blockquote>
-<p>FIXME add picture of a finished TalkBox</p>
-</blockquote>
+</ul><p><img src="http://sandbox.eecs.yorku.ca/files/7313/9666/2496/image-1.jpeg" alt="An assembled TalkBox in use."></p>
 
 <p>A MPR121 capacitive touch sensor board is used to create easy to operate buttons that require only touch but no pressure. The schematic can be found <a href="github.com/tkunic/TalkBox/schematic">here FIXME</a>. Each of the pins labelled 0-11 can be connected to a conductive pad (like a piece of aluminium foil) to create a button. The rest of the assembly process consists of plugging in 5 wires from the MPR121 to the Raspberry Pi. The design has been kept simple to facilitate activities where the students could participate in the assembly of their own devices.</p>
 
@@ -91,15 +89,25 @@ i2c-dev
 
 <p>After connecting the MPR121 sensor, test if it is visible by running:</p>
 
-<pre><code>sudo i2cdetect -y 1
+<pre><code>pi@raspberrypi ~ $ sudo i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- 5a -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- --
 </code></pre>
 
-<blockquote>
-<p>FIXME You should see a field of zeros and a nonzero value</p>
-</blockquote>
+<p>If you see the above output with '5a', then I2C communication to the MPR121 is working correctly. If you cannot see the '5a' field and you followed the above instructions correctly, the problem is likely electrical (poor soldering connection between board and wire or similar).</p>
 
 <h2>
 <a name="use" class="anchor" href="#use"><span class="octicon octicon-link"></span></a>Use</h2>
+
+<h3>
+<a name="graphical-user-interface" class="anchor" href="#graphical-user-interface"><span class="octicon octicon-link"></span></a>Graphical User Interface</h3>
 
 <p>To use TalkBox, run talkbox.py by double clicking it. A user interface should show up as below:</p>
 
@@ -107,8 +115,15 @@ i2c-dev
 
 <blockquote>
 <p>FIXME add annotated screenshot of GUI instead of mockup</p>
+</blockquote>
 
-<p>FIXME explain daemon mode (headerless)</p>
+<h3>
+<a name="daemon-mode" class="anchor" href="#daemon-mode"><span class="octicon octicon-link"></span></a>Daemon Mode</h3>
+
+<p>The Daemon mode is used to start a TalkBox Configuration file (*.tbc) in headerless mode, without a keyboard or mouse necessary. Just plug into electricity, plug in a speaker and you are good to go!</p>
+
+<blockquote>
+<p>FIXME explain how to set up daemon mode, mouse controls</p>
 </blockquote>
 
 <h2>
