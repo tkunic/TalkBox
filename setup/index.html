@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="The current iteration of the TalkBox is mostly used as a teaching aid for students with with cognitive, physical or d..." >
+<meta name="author" content="Toni Kunic">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>Technical Description and Setup &middot; TalkBox</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="TalkBox"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/submission_overview" title="Submission Overview"
+     >Submission Overview</a>
+  
+  <a href="/summary" title="Summary"
+     >Summary</a>
+  
+  <a href="/setup" title="Setup"
+     >Setup</a>
+  
+  <a href="/media" title="Media"
+     >Media</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <h2>Technical Description and Setup</h2>
+
+  <p>The current iteration of the TalkBox is mostly used as a teaching aid for students with with cognitive, physical or developmental disabilities. It serves as a configurable, cheap and portable soundboard, and can help with learning the essentials of verbal communication.</p>
+
+<h2>Hardware</h2>
+
+<p>The hardware necessary to make a TalkBox should cost you around $50. The following parts are necessary:</p>
+
+<ul>
+<li><a href="http://www.raspberrypi.org/">Raspberry Pi Computer</a></li>
+<li><a href="https://www.sparkfun.com/products/9695">MPR121 Capacitive Touch Sensor Breakout Board</a></li>
+<li>A USB outlet or battery pack to power the device</li>
+<li>Some headers and wires</li>
+<li>A speaker</li>
+<li>Materials to build the button pad. We suggest something non-conductive for the base and something conductive for the buttons themselves (e.g. polystyrene base and aluminum buttons).</li>
+</ul>
+
+<p><img alt="A schematic showing interconnections between TalkBox and the MPR121 capacitative touch sensor" src="/public/images/schematic.png" style="float: right; height: 600px"/></p>
+
+<p>A MPR121 capacitive touch sensor board is used to create easy to operate buttons that require only touch but no pressure. The schematic can be found <a href="https://github.com/tkunic/TalkBox/tree/master/docs">here</a>. Each of the pins labelled 0-11 can be connected to a conductive pad (like a piece of aluminium foil) to create a button. The rest of the assembly process consists of plugging in 5 wires from the MPR121 to the Raspberry Pi. The design has been kept simple to facilitate activities where the students could participate in the assembly of their own devices. You can see the schematic on the right hand side.</p>
+
+<p>Some tips when assembling the device:</p>
+
+<ul>
+<li>The shorter the wires and the smaller the button pads the more reliably the device will fire. Please see above image for conventional setup.</li>
+<li>Be careful with battery packs, when they are almost out of charge the device may become unstable (garbled sound output, brownouts etc.). Try finding a battery pack capable of supplying at least 1 A of current, but unless you need portability, using wall power is recommended.</li>
+<li>In case of no audio, try running <code>sudo raspi-config</code> from the terminal and under Advanced Options force audio to 3.5mm. In case the volume is too low, use the <code>alsamixer</code> command and arrow keys to increase volume.</li>
+</ul>
+
+<h2>Software</h2>
+
+<p>You will need to install the TalkBox software onto a Raspberry Pi. Please begin by downloading the archive from one of the links in the sidebar to the Pi. Unpack the archive into your home directory (<code>/home/pi/</code>).</p>
+
+<blockquote>
+<p>Please note that at a later date these instructions will be replaced with a simple setup utility.</p>
+</blockquote>
+
+<p>Next, install the dependencies for TalkBox by running the following commands from a terminal (internet connection required):</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">sudo apt-get update<span class="p">;</span> sudo apt-get upgrade<span class="p">;</span> sudo apt-get dist-upgrade
+sudo apt-get install python-smbus i2c-tools python-dev python-pip
+sudo pip install evdev
+</code></pre></div>
+<p>Next, open /etc/modules (via <code>nano /etc/modules</code>) and add:
+<code>
+i2c-bcm2708
+i2c-dev
+</code></p>
+
+<p>Next, open /etc/modprobe.d/raspi-blacklist.conf (via <code>nano /etc/modprobe.d/raspi-blacklist.conf</code>) and comment out the following line by prepending <code>#</code> to it:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text"># blacklist i2c-bcm2708
+</code></pre></div>
+<p>and reboot.</p>
+
+<p>After connecting the MPR121 sensor, test if it is visible by running:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">pi@raspberrypi ~ $ sudo i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+     00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     50: -- -- -- -- -- -- -- -- -- -- 5a -- -- -- -- -- 
+     60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+     70: -- -- -- -- -- -- -- --
+</code></pre></div>
+<p>If you see the above output with &#39;5a&#39;, then I2C communication to the MPR121 is working correctly. If you cannot see the &#39;5a&#39; field and you followed the above instructions correctly, the problem is likely electrical (poor soldering connection between board and wire or similar).</p>
+
+<h2>Use</h2>
+
+<h3>Graphical User Interface</h3>
+
+<p>To use TalkBox, run talkbox.py by double clicking it. A user interface should show up as below:</p>
+
+<p><img src="/public/images/talkbox_gui.png" alt="TalkBox GUI"></p>
+
+<h3>Daemon Mode</h3>
+
+<p>The Daemon mode is used to start a TalkBox Configuration file (*.tbc) in headerless mode, without a keyboard or mouse necessary. Just plug into electricity, plug in a speaker and you are good to go!</p>
+
+<blockquote>
+<p>Further instructions pending</p>
+</blockquote>
+
+<h2>Contributing</h2>
+
+<p>We welcome all contributions and improvements by the community! Please fork, improve, and send pull requests on <a href="http://github.com/tkunic/TalkBox">GitHub</a>!</p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="## Overview**TalkBox I** is an open-source, open-hardware Speech Generating Device (SGD).  It provides the community ..." >
+<meta name="author" content="Toni Kunic">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>Summary of the Design Submission &middot; TalkBox</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="TalkBox"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/submission_overview" title="Submission Overview"
+     >Submission Overview</a>
+  
+  <a href="/summary" title="Summary"
+     >Summary</a>
+  
+  <a href="/setup" title="Setup"
+     >Setup</a>
+  
+  <a href="/media" title="Media"
+     >Media</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <h2>Summary of the Design Submission</h2>
+
+  <h2>Overview</h2>
+
+<p><strong>TalkBox I</strong> is an open-source, open-hardware Speech Generating Device (SGD).  It provides the community with a way to easily access a low-cost, easily configurable SGD.  It also provides employment opportunities for high school students who have developmental disabilities.</p>
+
+<p>TalkBox I consists of the following:</p>
+
+<ol>
+<li><p>An assembly of electronic/computer components, using an open-Source hardware plan (available at the <a href="http://tkunic.GitHub.io/TalkBox/">GitHub page</a>), with the following:</p>
+
+<ul>
+<li><a href="http://www.raspberrypi.org/">Raspberry Pi Computer</a> ($35)</li>
+<li><a href="https://www.sparkfun.com/products/9695">MPR121 Capacitive Touch Sensor Breakout Board</a> ($9.95)</li>
+<li>an inexpensive battery power source ($10)</li>
+<li>an inexpensive mini-speaker ($10)</li>
+</ul></li>
+<li><p>The TalkBox I software module (<a href="http://tkunic.GitHub.io/TalkBox/">GitHub page</a>), and a set of audio files.</p></li>
+<li><p>The button pad, which can be anything conductive. The design featured in the image below is made from the following components (approx. cost $5):</p>
+
+<ul>
+<li>polystyrene foam</li>
+<li>self-adhesive aluminum duct tape</li>
+<li>colour pictures, printed on regular paper using an InkJet printer</li>
+</ul></li>
+</ol>
+
+<p>Components #1 and #2 were designed, implemented and tested by the submitter, with feedback and input from the project collaborators. Component #3 was developed by R. Feraday, with feedback and input from the submitter and other project collaborators.  A completed system is shown in the image below:</p>
+
+<p><img src="/public/images/talkbox_use.jpeg" alt="A picture showing an assembled TalkBox device"></p>
+
+<h2>How it Works</h2>
+
+<p><strong>TalkBox I</strong> design and instructions are currently available on <a href="http://github.com/tkunic/TalkBox">GitHub</a>, and can be built by anyone. It is a <strong>Speech Generating Device</strong> (SGD), also known as a <strong>Voice Output Communication Aid</strong> (VOCA), which is an electronic system that is used to supplement or replace speech and/or writing.  These devices can be important for people who have limited means of interacting verbally (for instance, when a person is non-verbal or whose speech is unintelligible), as they allow individuals to become active participants in communication interactions. Using TalkBox I, the communicator presses one of up to 12 buttons, each one linked to an audio file that contains a word, phrase or sentence.  The set of words or sentences is designed by the communicator and his or her stakeholders (e.g., family members, teacher, speech language pathologist).</p>
+
+<p>The expected target user group is children and young adults in the elementary and secondary school systems who have development disabilities.  Often, these are the students of teachers who are extraordinary advocates and problem solvers for their students; they seek to overcome obstacles in the system that is in place to match Assistive Technology solutions to students (the publicly-funded <a href="http://www.health.gov.on.ca/en/public/programs/adp/">Assistive Devices Program</a>, operated by the Ontario Ministry of Health and Long-Term Care).  These obstacles include long waiting lists, delays in the assessment and prescription process, lack of configurability, and perhaps most significantly, high cost (e.g., according to the <a href="http://www.health.gov.on.ca/en/pro/programs/adp/information_technology/docs/communication_aids_clinics.pdf">Communication Aids Product Manual</a>, the cost of the DynaVox is $10,105 and the PRC Eco2 is $15,930). One of the project collaborators is one of these teachers. </p>
+
+<p>These teachers are seeking easy access to low-cost, easily configurable SGDs.  These SGDs serve multiple purposes: they are not only  communication devices, but also teaching supports (e.g, to learn social routines, to learn the building blocks of language), and a scaffold for bridging the digital divide (a stepping stone for web browsers).</p>
+
+<p>However, it is expected that many of these teachers and other stakeholders may not have the required skills, materials, or resources to create their own TalkBoxes.  An elegant solution is to recruit the students themselves to assemble the TalkBoxes, as a paid part-time job.  The system has been designed to be assembled by youth with mild cognitive disabilities.  We are currently working on developing the materials that will support the fabrication process (e.g., picture-based guides and other communication materials), designing a pilot study and developing a partnership with a community organization that would provide the necessary logistical support.</p>
+
+<h2>Background</h2>
+
+<p>Despite the important role that a SGD can play in supporting interpersonal communication, there are many barriers to obtaining a SGD (e.g., high cost, requisite knowledge, access to expertise, long waiting lists) and also a relatively high abandonment rate.  It has been estimated that approximately one third of people who obtain an SGD stop using it, for a variety of reasons [1,2].</p>
+
+<p>In the open-source approach to design, all design information about the hardware design (e.g., component list, schematics) and the open-source software that drives the hardware are shared publicly, under some sort of Open Source Software (OSS) license, such as the MIT License, Apache License, or GPL V2 or V3 License.  An OSS license allows end users to review and modify the source code, blueprint or design for their own customization, curiosity or troubleshooting needs. </p>
+
+<p>Although some researchers and activists have identified the possibilities of the DIY and OSS approaches for assistive technology, the potential has not yet been fully explored [4]. The use of OSS to make customizable designs is considerably easier than other approaches (e.g., trying to hack closed-box commercial off-the-shelf technologies or designing from scratch).</p>
+
+<p>However, different barriers exist for people who would like to adopt the DIY approach. These include knowledge barriers (having limited knowledge of programming and/or electronics), cost barriers and physical and cognitive barriers. Hurst and Kane have previously identified a need to develop tools to make “making” more accessible [3].</p>
+
+<h2>Method &amp; Background</h2>
+
+<p>During the <a href="http://makerfairetoronto.com">2013 Toronto MakerFaire</a>, an opportunity for collaboration was identified.  I was part of a York group attending the event with graduate student Foad Hamidi and faculty member Melanie Baljko, where we met up with a Toronto-area high-school teacher (Ray Feraday), who was showing an initial version of a DIY-version of a SGD.   and Special Education formed . Following this initial contact possibilities for collaboration were explored and eventually a team was formed to work on a second version of the communication board (which was then dubbed “TalkBox”).</p>
+
+<p>[1] Phillips, B. and Zhao, H. 1993. Predictors of assistive technology abandonment. In Assistive Technology. Taylor &amp; Francis. 5(1): 36-45.</p>
+
+<p>[2] Riemer-Reiss, M. (2000) Assistive technology discontinuance. Proceedings of Technology and Persons with Disabilities Conference. California State University, Northridge.</p>
+
+<p>[3] Hurst, A. and Kane, S. 2013. Making &quot;making&quot; accessible. In <em>Proc. of IDC &#39;13</em>. ACM, New York, NY, 635-638.</p>
+
+<p>[4] Hurst, A. and Tobias, J. 2011. Empowering individuals with do-it-yourself assistive technology. In Proc. of Assets’11, 11-18.</p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>
