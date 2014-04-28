@@ -1,0 +1,39 @@
+{
+    "name": "SoundSet 1",
+    "0": {
+        "soundfile": "file1.wav"
+    }, 
+    "1": {
+        "soundfile": ""
+    }, 
+    "2": {
+        "soundfile": ""
+    }, 
+    "3": {
+        "soundfile": ""
+    }, 
+    "4": {
+        "soundfile": ""
+    }, 
+    "5": {
+        "soundfile": ""
+    }, 
+    "6": {
+        "soundfile": ""
+    }, 
+    "7": {
+        "soundfile": ""
+    }, 
+    "8": {
+        "soundfile": ""
+    }, 
+    "9": {
+        "soundfile": ""
+    }, 
+    "10": {
+        "soundfile": ""
+    }, 
+    "11": {
+        "soundfile": ""
+    }
+}

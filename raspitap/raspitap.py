@@ -3,6 +3,7 @@
 # TODO add basic input checking
 
 import os
+import shutil
 import json
 from zipfile import ZipFile
 
@@ -14,6 +15,7 @@ class TalkBoxConf:
         self.soundsets = {}
 
     def set_from_file(self, file_path):
+        # FIXME to avoid more complicated solutions, extract to tempfile.mkdtemp and point everyone there. Remember to delete when done.
         self.soundsets.clear()
         with ZipFile(file_path) as zfp:
             # use generator to filter out all files that aren not json
