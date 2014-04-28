@@ -1,53 +1,89 @@
 #!/usr/bin/env python
 
-"""raspitap.py: A Makey-Makey clone for Raspberry PI."""
+# TODO add basic input checking
 
 import os
 import json
+from zipfile import ZipFile
 
-from evdev import UInput, AbsInfo, ecodes as e
+NUMBER_OF_PINS = 12
 
-import RPi.GPIO as GPIO
-import mpr121
+class TalkBoxConf:
 
-# Use GPIO Interrupt Pin
+    def __init__(self):
+        self.soundsets = {}
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7, GPIO.IN)
+    def set_from_file(self, file_path):
+        self.soundsets.clear()
+        with ZipFile(file_path) as zfp:
+            # use generator to filter out all files that aren not json
+            for json_file in (filename for filename in zfp.namelist() if filename.lower().endswith('.json')):
+                with zfp.open(json_file) as fp:
+                    ss = SoundSet('.'.join(json_file.split('.')[0:-1]))
+                    ss.from_json(fp.read())
+                    self.add_soundset(ss)
 
-# Use mpr121 class for everything else
 
-mpr121.TOU_THRESH = 0x30
-mpr121.REL_THRESH = 0x33
-mpr121.setup(0x5a)
+    def write_to_file(self, file_path):
+        with ZipFile(file_path, 'w') as zfp:
+            for soundset_name, soundset in self.soundsets.iteritems():
+                zfp.writestr(soundset_name+'.json', soundset.to_json())
+                for pin_num in xrange(NUMBER_OF_PINS):
+                    soundfile_path = soundset.get_pin(pin_num).get_soundfile()
+                    if os.path.isfile(soundfile_path):
+                        zfp.write(soundfile_path)
 
-# Set up event injection
-ui = UInput()
+    def list_soundsets(self):
+        return self.soundsets
 
-# FIXME: needs a scheme to set these via config and more extensibly than a fixed length list
-keys = [e.KEY_A, e.KEY_B, e.KEY_C, e.KEY_D, e.KEY_LEFT, e.KEY_UP, e.KEY_DOWN, e.KEY_RIGHT, e.KEY_1, e.KEY_2, e.KEY_3, e.KEY_4]
+    def add_soundset(self, soundset):
+        self.soundsets[soundset.get_name()] = soundset
 
-# Track touches
-touches = [0,0,0,0,0,0,0,0,0,0,0,0];
+    def remove_soundset(self, soundset_name):
+        del self.soundsets[soundset_name]
 
-while True:
+    def get_soundset(self, soundset_name):
+        return self.soundsets[soundset_name]
 
-	if (GPIO.input(7)): # Interupt pin is high
-		pass
-	else: # Interupt pin is low
+class SoundSet:
 
-		touchData = mpr121.readWordData(0x5a)
+    def __init__(self, name):
+        self.name = name
+        self.pinconfs = {}
+        for pin_num in xrange(NUMBER_OF_PINS):
+            self.pinconfs[pin_num] = PinConf()
 
-		for i in xrange(12):
-			if (touchData & (1<<i)):
-				if (touches[i] == 0):
-					print( 'Pin ' + str(i) + ' was just touched')
-					ui.write(e.EV_KEY, keys[i], 1) # key down
-				touches[i] = 1;
-			else:
-				if (touches[i] == 1):
-					print( 'Pin ' + str(i) + ' was just released')
-					ui.write(e.EV_KEY, keys[i], 0) # key down
-				touches[i] = 0
-		ui.syn()
-ui.close()
+    def to_json(self):
+        result_map = {}
+        for pin_num, pinconf in self.pinconfs.iteritems():
+            result_map[pin_num] = {}
+            soundfile_path = pinconf.get_soundfile() 
+            result_map[pin_num]['soundfile_path'] = soundfile_path
+            result_map[pin_num]['soundfile_name'] = os.path.basename(soundfile_path)
+
+        return json.dumps(result_map)
+
+    def from_json(self, json_string):
+        for pin_num, entry in json.loads(json_string).iteritems():
+            self.pinconfs[pin_num] = PinConf()
+            self.pinconfs[pin_num].set_soundfile(entry['soundfile_name'])
+            
+    def get_name(self):
+        return self.name
+
+    def get_pin(self, pin_num):
+        return self.pinconfs[pin_num]
+
+class PinConf:
+    def __init__(self):
+        self.soundfile_path = ''
+
+    def set_soundfile(self, soundfile_path):
+        self.soundfile_path = soundfile_path
+
+    def get_soundfile(self):
+        return self.soundfile_path
+
+    def set_soundsynth(self, text):
+        """Synths speech from this text using espeak and writes result to a file."""
+        pass
