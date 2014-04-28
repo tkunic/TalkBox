@@ -17,7 +17,7 @@ Setup Instructions
 ------------------
 
 ``` bash
-sudo apt-get install python-smbus i2c-tools python-dev python-pip
+sudo apt-get install libgtk-3-dev python-smbus i2c-tools python-dev python-pip
 sudo apt-get update; sudo apt-get upgrade; sudo apt-get dist-upgrade
 sudo pip install evdev
 ```
