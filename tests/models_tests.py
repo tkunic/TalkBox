@@ -1,5 +1,5 @@
 from nose.tools import *
-from raspitap.raspitap import TalkBoxConf, SoundSet, PinConf
+from raspitap.models.tbc import TalkBoxConf, SoundSet, PinConf
 
 import hashlib
 
@@ -58,6 +58,14 @@ def test_write_read_wav_TalkBoxConf():
 
     gotten_wav_path = tbc2.get_soundset('soundset1').get_pin(1).get_soundfile()
     assert_equal(partial_file_checksum(gotten_wav_path), partial_file_checksum(wav_path))
+
+def test_tbc_remove_soundset():
+    # add a couple to tbc, check what's there, remove one, check what's left.
+    pass
+
+def test_tbc_list_soundsets():
+    # a subset of the above
+    pass
 
 # A reminder of what python testing looks like
 
