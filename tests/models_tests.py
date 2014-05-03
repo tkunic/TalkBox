@@ -1,5 +1,5 @@
 from nose.tools import *
-from raspitap.models.tbc import TalkBoxConf, SoundSet, PinConf
+from talkbox.models.tbc import TalkBoxConf, SoundSet, PinConf
 
 import hashlib
 
