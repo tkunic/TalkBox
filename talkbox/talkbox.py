@@ -58,54 +58,7 @@ class TalkBoxWindow(Gtk.Window):
         toolbar = uimanager.get_widget("/ToolBar")
         rootbox.pack_start(toolbar, False, False, 0)
 
-        # Configuration Box for TBC and SoundSets TODO move this to separate file
-        confbox = Gtk.Box(spacing=6)
-        # TODO make TBCPreviewer.setTBC() instead of this
-        listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-
-        self.liststore = Gtk.ListStore(str)
-        tk_soundsets = ["Essentials 1", "Essentials 2", "Essentials 3", "Days in Week", "Months", "Feeling", "Attendance M", "Attendance F", "Temperature"]
-        for elem in tk_soundsets:
-            self.liststore.append([elem])
-
-        treeview = Gtk.TreeView(model=self.liststore)
-
-        renderer_text = Gtk.CellRendererText()
-        renderer_text.set_property("editable", True)
-        column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
-        treeview.append_column(column_text)
-
-        renderer_text.connect("edited", self.on_text_edited)
-        select = treeview.get_selection()
-        select.connect("changed", self.on_tree_selection_changed)
-
-        listbox.add(treeview)
-
-        addrm_button_box = Gtk.Box(spacing=6)
-
-        add_button = Gtk.Button.new_from_stock(Gtk.STOCK_ADD)
-        # TODO add_button.connect("clicked", self.on_add_button_clicked)
-        addrm_button_box.pack_start(add_button, True, True, 0)
-        
-        rm_button = Gtk.Button.new_from_stock(Gtk.STOCK_REMOVE)
-        # TODO rm_button.connect("clicked", self.on_rm_button_clicked)
-        addrm_button_box.pack_start(rm_button, True, True, 0)
-
-        listbox.pack_start(addrm_button_box, True, True, 0)
-        confbox.pack_start(listbox, True, True, 0)
-
-
-        previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        # TODO make SoundSetPreviewer.setSoundSet() instead of this. Inherist from ListBox
-        for i in range(12):
-            vbox = Gtk.Box(spacing=6)
-            pin_num_label = Gtk.Label(xalign=0)
-            pin_num_label.set_markup("<span size=\"x-large\">{0}</span>".format(i))
-            vbox.pack_start(pin_num_label, True, True, 0)
-            previewbox.pack_start(vbox, True, True, 0)
-
-        confbox.pack_start(previewbox, True, True, 0)
-
+        confbox = self.create_config_box()
         rootbox.add(confbox)
 
         self.add(rootbox)
@@ -164,6 +117,65 @@ class TalkBoxWindow(Gtk.Window):
         accelgroup = uimanager.get_accel_group()
         self.add_accel_group(accelgroup)
         return uimanager
+    
+    def create_config_box(self):
+                # Configuration Box for TBC and SoundSets TODO move this to separate file
+        confbox = Gtk.Box(spacing=6)
+        
+        listbox = self.create_listbox()
+        confbox.pack_start(listbox, True, True, 0)
+
+        previewbox = self.create_previewbox()
+        confbox.pack_start(previewbox, True, True, 0)
+
+        return confbox
+
+    def create_listbox(self):
+        # TODO make TBCPreviewer.setTBC() instead of this
+        listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+        self.liststore = Gtk.ListStore(str)
+        # FIXME here only for mockup purposes
+        tk_soundsets = ["Essentials 1", "Essentials 2", "Essentials 3", "Days in Week", "Months", "Feeling", "Attendance M", "Attendance F", "Temperature"]
+        for elem in tk_soundsets:
+            self.liststore.append([elem])
+
+        treeview = Gtk.TreeView(model=self.liststore)
+
+        renderer_text = Gtk.CellRendererText()
+        renderer_text.set_property("editable", True)
+        column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
+        treeview.append_column(column_text)
+
+        renderer_text.connect("edited", self.on_text_edited)
+        select = treeview.get_selection()
+        select.connect("changed", self.on_tree_selection_changed)
+
+        listbox.pack_start(treeview, True, True, 0)
+
+        addrm_button_box = Gtk.Box(spacing=6)
+
+        add_button = Gtk.Button.new_from_stock(Gtk.STOCK_ADD)
+        # TODO add_button.connect("clicked", self.on_add_button_clicked)
+        addrm_button_box.pack_start(add_button, True, True, 0)
+        
+        rm_button = Gtk.Button.new_from_stock(Gtk.STOCK_REMOVE)
+        # TODO rm_button.connect("clicked", self.on_rm_button_clicked)
+        addrm_button_box.pack_start(rm_button, True, True, 0)
+
+        listbox.pack_start(addrm_button_box, False, True, 0)
+        return listbox
+    
+    def create_previewbox(self):
+        previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        # TODO make SoundSetPreviewer.setSoundSet() instead of this. Inherist from ListBox
+        for i in range(12):
+            vbox = Gtk.Box(spacing=6)
+            pin_num_label = Gtk.Label(xalign=0)
+            pin_num_label.set_markup("<span size=\"x-large\">{0}</span>".format(i))
+            vbox.pack_start(pin_num_label, True, True, 0)
+            previewbox.pack_start(vbox, True, True, 0)
+        return previewbox
 
     def on_menu_file_new(self, widget):
         print("A File|New menu item was selected.")
@@ -203,7 +215,7 @@ class TalkBoxWindow(Gtk.Window):
     def on_tree_selection_changed(self, selection):
         model, treeiter = selection.get_selected()
         if treeiter != None:
-            print("You selected" + model[treeiter][0])
+            print("You selected: " + model[treeiter][0])
 
 window = TalkBoxWindow()        
 window.connect("delete-event", Gtk.main_quit)
