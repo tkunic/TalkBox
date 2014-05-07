@@ -59,7 +59,7 @@ class TalkBoxWindow(Gtk.Window):
         rootbox.pack_start(toolbar, False, False, 0)
 
         confbox = self.create_config_box()
-        rootbox.add(confbox)
+        rootbox.pack_start(confbox, True, True, 0)
 
         self.add(rootbox)
 
@@ -156,11 +156,11 @@ class TalkBoxWindow(Gtk.Window):
         addrm_button_box = Gtk.Box(spacing=6)
 
         add_button = Gtk.Button.new_from_stock(Gtk.STOCK_ADD)
-        # TODO add_button.connect("clicked", self.on_add_button_clicked)
+        add_button.connect("clicked", self.on_add_button_clicked)
         addrm_button_box.pack_start(add_button, True, True, 0)
         
         rm_button = Gtk.Button.new_from_stock(Gtk.STOCK_REMOVE)
-        # TODO rm_button.connect("clicked", self.on_rm_button_clicked)
+        rm_button.connect("clicked", self.on_rm_button_clicked)
         addrm_button_box.pack_start(rm_button, True, True, 0)
 
         listbox.pack_start(addrm_button_box, False, True, 0)
@@ -170,13 +170,40 @@ class TalkBoxWindow(Gtk.Window):
         previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         # TODO make SoundSetPreviewer.setSoundSet() instead of this. Inherist from ListBox
         for i in range(12):
-            vbox = Gtk.Box(spacing=6)
-            pin_num_label = Gtk.Label(xalign=0)
-            pin_num_label.set_markup("<span size=\"x-large\">{0}</span>".format(i))
-            vbox.pack_start(pin_num_label, True, True, 0)
-            previewbox.pack_start(vbox, True, True, 0)
+            previewbox.pack_start(self.create_pinbox(i), True, True, 0)
         return previewbox
 
+    def create_pinbox(self, pin_num):
+        pinbox = Gtk.Box(spacing=6)
+        pin_num_label = Gtk.Label(xalign=0)
+        pin_num_label.set_markup("<span font=\"32\">{0}</span>".format("  " + str(pin_num) if (pin_num < 10) else pin_num))
+        pinbox.pack_start(pin_num_label, False, False, 0)
+        
+        switchbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        pinbox.pack_start(switchbox, True, True, 0)
+
+        stack = Gtk.Stack()
+        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        stack.set_transition_duration(500)
+        
+        synth_entry = Gtk.Entry()
+        stack.add_titled(synth_entry, "synth_entry", "Synth Entry")
+        
+        filebox = Gtk.Box(spacing=6)
+        filebutton = Gtk.Button("Browse...")
+        filebutton.connect("clicked", self.on_browse_soundfiles)
+        filebox.pack_start(filebutton, True, True, 0)
+        fileentry = Gtk.Entry()
+        filebox.pack_start(fileentry, True, True, 0)
+        stack.add_titled(filebox, "filebox", "Sound File")
+
+        stack_switcher = Gtk.StackSwitcher()
+        stack_switcher.set_stack(stack)
+        switchbox.pack_start(stack_switcher, True, True, 0)
+        switchbox.pack_start(stack, True, True, 0)
+        
+        return pinbox
+    
     def on_menu_file_new(self, widget):
         print("A File|New menu item was selected.")
 
@@ -216,8 +243,22 @@ class TalkBoxWindow(Gtk.Window):
         model, treeiter = selection.get_selected()
         if treeiter != None:
             print("You selected: " + model[treeiter][0])
+            
+    def on_add_button_clicked(self, widget):
+        print "add button clicked"
+        
+    def on_rm_button_clicked(self, widget):
+        print "rm button clicked"
+        
+    def on_browse_soundfiles(self, widget):
+        print "browse soundfiles clicked!"
 
-window = TalkBoxWindow()        
-window.connect("delete-event", Gtk.main_quit)
-window.show_all()
-Gtk.main()
+
+if __name__ == '__main__':
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    window = TalkBoxWindow()        
+    window.connect("delete-event", Gtk.main_quit)
+    window.show_all()
+    #window.fullscreen()
+    Gtk.main()
