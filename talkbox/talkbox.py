@@ -191,7 +191,7 @@ class TalkBoxWindow(Gtk.Window):
         
         filebox = Gtk.Box(spacing=6)
         filebutton = Gtk.Button("Browse...")
-        filebutton.connect("clicked", self.on_browse_soundfiles)
+        filebutton.connect("clicked", self.on_browse_soundfiles, pin_num)
         filebox.pack_start(filebutton, True, True, 0)
         fileentry = Gtk.Entry()
         filebox.pack_start(fileentry, True, True, 0)
@@ -202,6 +202,10 @@ class TalkBoxWindow(Gtk.Window):
         switchbox.pack_start(stack_switcher, True, True, 0)
         switchbox.pack_start(stack, True, True, 0)
         
+        play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
+        play_button.connect("clicked", self.on_play_button_clicked, pin_num)
+        pinbox.pack_start(play_button, True, True, 0)
+        
         return pinbox
     
     def on_menu_file_new(self, widget):
@@ -209,6 +213,7 @@ class TalkBoxWindow(Gtk.Window):
 
     def on_menu_file_open(self, widget):
         print("file open")
+        print "Selected TBC file: " + self.select_file_dialog("tbc")
 
     def on_menu_file_save(self, widget):
         print("file save")
@@ -250,10 +255,46 @@ class TalkBoxWindow(Gtk.Window):
     def on_rm_button_clicked(self, widget):
         print "rm button clicked"
         
-    def on_browse_soundfiles(self, widget):
-        print "browse soundfiles clicked!"
+    def on_browse_soundfiles(self, widget, pin_num):
+        print "Soundfile for pin {0} selected: {1}".format(pin_num, self.select_file_dialog("wav"))
+        
+    def on_play_button_clicked(self, widget, pin_num):
+        print "Play button for pin_number {0} clicked".format(pin_num)
+    
+    def select_file_dialog(self, extension):
+        dialog = Gtk.FileChooserDialog("Please choose a file", self,
+            Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
+        # Add some filters for supported content types
+        if (extension == "wav"):
+            filter_wav = Gtk.FileFilter()
+            filter_wav.set_name("WAV files")
+            filter_wav.add_mime_type("audio/x-wav")
+            dialog.add_filter(filter_wav)
+        elif (extension == "tbc"):
+            filter_tbc = Gtk.FileFilter()
+            filter_tbc.set_name("TalkBox files")
+            filter_tbc.add_mime_type("application/zip")
+            dialog.add_filter(filter_tbc)
 
+        filter_any = Gtk.FileFilter()
+        filter_any.set_name("Any files")
+        filter_any.add_pattern("*")
+        dialog.add_filter(filter_any)
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print("Open clicked")
+            filename = dialog.get_filename()
+            print("File selected: " + filename)
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        dialog.destroy()
+        return filename
+        
 if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal.SIG_DFL)
