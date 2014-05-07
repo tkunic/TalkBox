@@ -204,7 +204,7 @@ class TalkBoxWindow(Gtk.Window):
         
         play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
         play_button.connect("clicked", self.on_play_button_clicked, pin_num)
-        pinbox.pack_start(play_button, True, True, 0)
+        pinbox.pack_start(play_button, False, True, 0)
         
         return pinbox
     
@@ -217,6 +217,7 @@ class TalkBoxWindow(Gtk.Window):
 
     def on_menu_file_save(self, widget):
         print("file save")
+        print "Selected TBC file: " + self.select_file_dialog("tbc", action="save")
 
     def on_menu_file_quit(self, widget):
         Gtk.main_quit()
@@ -261,11 +262,21 @@ class TalkBoxWindow(Gtk.Window):
     def on_play_button_clicked(self, widget, pin_num):
         print "Play button for pin_number {0} clicked".format(pin_num)
     
-    def select_file_dialog(self, extension):
+    def select_file_dialog(self, extension, action="open"):
+        if action == "save":
+            fc_action = Gtk.FileChooserAction.SAVE
+            fc_button = Gtk.STOCK_SAVE
+        else:
+            fc_action = Gtk.FileChooserAction.OPEN
+            fc_button = Gtk.STOCK_OPEN
+        
         dialog = Gtk.FileChooserDialog("Please choose a file", self,
-            Gtk.FileChooserAction.OPEN,
+            fc_action,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+             fc_button, Gtk.ResponseType.OK))
+        
+        if action == "save" and extension == "tbc":
+            dialog.set_current_name("Untitled.tbc")
 
         # Add some filters for supported content types
         if (extension == "wav"):
@@ -286,7 +297,6 @@ class TalkBoxWindow(Gtk.Window):
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            print("Open clicked")
             filename = dialog.get_filename()
             print("File selected: " + filename)
         elif response == Gtk.ResponseType.CANCEL:
