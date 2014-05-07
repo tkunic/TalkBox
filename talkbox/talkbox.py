@@ -58,7 +58,7 @@ class TalkBoxWindow(Gtk.Window):
         toolbar = uimanager.get_widget("/ToolBar")
         rootbox.pack_start(toolbar, False, False, 0)
 
-        confbox = self.create_config_box()
+        confbox = TBCView()
         rootbox.pack_start(confbox, True, True, 0)
 
         self.add(rootbox)
@@ -118,106 +118,17 @@ class TalkBoxWindow(Gtk.Window):
         self.add_accel_group(accelgroup)
         return uimanager
     
-    def create_config_box(self):
-                # Configuration Box for TBC and SoundSets TODO move this to separate file
-        confbox = Gtk.Box(spacing=6)
-        
-        listbox = self.create_listbox()
-        confbox.pack_start(listbox, True, True, 0)
-
-        previewbox = self.create_previewbox()
-        confbox.pack_start(previewbox, True, True, 0)
-
-        return confbox
-
-    def create_listbox(self):
-        # TODO make TBCPreviewer.setTBC() instead of this
-        listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-
-        self.liststore = Gtk.ListStore(str)
-        # FIXME here only for mockup purposes
-        tk_soundsets = ["Essentials 1", "Essentials 2", "Essentials 3", "Days in Week", "Months", "Feeling", "Attendance M", "Attendance F", "Temperature"]
-        for elem in tk_soundsets:
-            self.liststore.append([elem])
-
-        treeview = Gtk.TreeView(model=self.liststore)
-
-        renderer_text = Gtk.CellRendererText()
-        renderer_text.set_property("editable", True)
-        column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
-        treeview.append_column(column_text)
-
-        renderer_text.connect("edited", self.on_text_edited)
-        select = treeview.get_selection()
-        select.connect("changed", self.on_tree_selection_changed)
-
-        listbox.pack_start(treeview, True, True, 0)
-
-        addrm_button_box = Gtk.Box(spacing=6)
-
-        add_button = Gtk.Button.new_from_stock(Gtk.STOCK_ADD)
-        add_button.connect("clicked", self.on_add_button_clicked)
-        addrm_button_box.pack_start(add_button, True, True, 0)
-        
-        rm_button = Gtk.Button.new_from_stock(Gtk.STOCK_REMOVE)
-        rm_button.connect("clicked", self.on_rm_button_clicked)
-        addrm_button_box.pack_start(rm_button, True, True, 0)
-
-        listbox.pack_start(addrm_button_box, False, True, 0)
-        return listbox
-    
-    def create_previewbox(self):
-        previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        # TODO make SoundSetPreviewer.setSoundSet() instead of this. Inherist from ListBox
-        for i in range(12):
-            previewbox.pack_start(self.create_pinbox(i), True, True, 0)
-        return previewbox
-
-    def create_pinbox(self, pin_num):
-        pinbox = Gtk.Box(spacing=6)
-        pin_num_label = Gtk.Label(xalign=0)
-        pin_num_label.set_markup("<span font=\"32\">{0}</span>".format("  " + str(pin_num) if (pin_num < 10) else pin_num))
-        pinbox.pack_start(pin_num_label, False, False, 0)
-        
-        switchbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        pinbox.pack_start(switchbox, True, True, 0)
-
-        stack = Gtk.Stack()
-        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        stack.set_transition_duration(500)
-        
-        synth_entry = Gtk.Entry()
-        stack.add_titled(synth_entry, "synth_entry", "Synth Entry")
-        
-        filebox = Gtk.Box(spacing=6)
-        filebutton = Gtk.Button("Browse...")
-        filebutton.connect("clicked", self.on_browse_soundfiles, pin_num)
-        filebox.pack_start(filebutton, True, True, 0)
-        fileentry = Gtk.Entry()
-        filebox.pack_start(fileentry, True, True, 0)
-        stack.add_titled(filebox, "filebox", "Sound File")
-
-        stack_switcher = Gtk.StackSwitcher()
-        stack_switcher.set_stack(stack)
-        switchbox.pack_start(stack_switcher, True, True, 0)
-        switchbox.pack_start(stack, True, True, 0)
-        
-        play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
-        play_button.connect("clicked", self.on_play_button_clicked, pin_num)
-        pinbox.pack_start(play_button, False, True, 0)
-        
-        return pinbox
     
     def on_menu_file_new(self, widget):
         print("A File|New menu item was selected.")
 
     def on_menu_file_open(self, widget):
         print("file open")
-        print "Selected TBC file: " + self.select_file_dialog("tbc")
+        print "Selected TBC file: " + select_file_dialog("tbc")
 
     def on_menu_file_save(self, widget):
         print("file save")
-        print "Selected TBC file: " + self.select_file_dialog("tbc", action="save")
+        print "Selected TBC file: " + select_file_dialog("tbc", action="save")
 
     def on_menu_file_quit(self, widget):
         Gtk.main_quit()
@@ -241,6 +152,54 @@ class TalkBoxWindow(Gtk.Window):
             print(widget.get_name() + " deactivated")
 
 
+        
+class TBCView(Gtk.Box):
+    def __init__(self):
+        super(TBCView, self).__init__(spacing=6)
+        
+        soundsetview = SoundSetView()
+        self.pack_start(soundsetview, True, True, 0)
+
+        previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        for i in range(12):
+            previewbox.pack_start(PinView(i), True, True, 0)
+        self.pack_start(previewbox, True, True, 0)
+
+class SoundSetView(Gtk.Box):
+    def __init__(self):
+        super(SoundSetView, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        
+        self.liststore = Gtk.ListStore(str)
+        # FIXME here only for mockup purposes
+        tk_soundsets = ["Essentials 1", "Essentials 2", "Essentials 3", "Days in Week", "Months", "Feeling", "Attendance M", "Attendance F", "Temperature"]
+        for elem in tk_soundsets:
+            self.liststore.append([elem])
+
+        treeview = Gtk.TreeView(model=self.liststore)
+
+        renderer_text = Gtk.CellRendererText()
+        renderer_text.set_property("editable", True)
+        column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
+        treeview.append_column(column_text)
+
+        renderer_text.connect("edited", self.on_text_edited)
+        select = treeview.get_selection()
+        select.connect("changed", self.on_tree_selection_changed)
+
+        self.pack_start(treeview, True, True, 0)
+
+        addrm_button_box = Gtk.Box(spacing=6)
+
+        add_button = Gtk.Button.new_from_stock(Gtk.STOCK_ADD)
+        add_button.connect("clicked", self.on_add_button_clicked)
+        addrm_button_box.pack_start(add_button, True, True, 0)
+        
+        rm_button = Gtk.Button.new_from_stock(Gtk.STOCK_REMOVE)
+        rm_button.connect("clicked", self.on_rm_button_clicked)
+        addrm_button_box.pack_start(rm_button, True, True, 0)
+
+        self.pack_start(addrm_button_box, False, True, 0)
+        
     def on_text_edited(self, widget, path, text):
         self.liststore[path][0] = text
         print("text edited: path = " + path + ", text = " + text)
@@ -255,59 +214,95 @@ class TalkBoxWindow(Gtk.Window):
         
     def on_rm_button_clicked(self, widget):
         print "rm button clicked"
+    
+class PinView(Gtk.Box):
+    def __init__(self, pin_num):
+        super(PinView, self).__init__(spacing=6)
+        
+        pin_num_label = Gtk.Label(xalign=0)
+        pin_num_label.set_markup("<span font=\"32\">{0}</span>".format("  " + str(pin_num) if (pin_num < 10) else pin_num))
+        self.pack_start(pin_num_label, False, False, 0)
+        
+        switchbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.pack_start(switchbox, True, True, 0)
+
+        stack = Gtk.Stack()
+        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        stack.set_transition_duration(500)
+        
+        synth_entry = Gtk.Entry()
+        stack.add_titled(synth_entry, "synth_entry", "Synth Entry")
+        
+        filebox = Gtk.Box(spacing=6)
+        filebutton = Gtk.Button("Browse...")
+        filebutton.connect("clicked", self.on_browse_soundfiles, pin_num)
+        filebox.pack_start(filebutton, True, True, 0)
+        fileentry = Gtk.Entry()
+        filebox.pack_start(fileentry, True, True, 0)
+        stack.add_titled(filebox, "filebox", "Sound File")
+
+        stack_switcher = Gtk.StackSwitcher()
+        stack_switcher.set_stack(stack)
+        switchbox.pack_start(stack_switcher, True, True, 0)
+        switchbox.pack_start(stack, True, True, 0)
+        
+        play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
+        play_button.connect("clicked", self.on_play_button_clicked, pin_num)
+        self.pack_start(play_button, False, True, 0)
         
     def on_browse_soundfiles(self, widget, pin_num):
-        print "Soundfile for pin {0} selected: {1}".format(pin_num, self.select_file_dialog("wav"))
+        print "Soundfile for pin {0} selected: {1}".format(pin_num, select_file_dialog("wav"))
         
     def on_play_button_clicked(self, widget, pin_num):
         print "Play button for pin_number {0} clicked".format(pin_num)
+
+def select_file_dialog(extension, action="open"):
+    if action == "save":
+        fc_action = Gtk.FileChooserAction.SAVE
+        fc_button = Gtk.STOCK_SAVE
+    else:
+        fc_action = Gtk.FileChooserAction.OPEN
+        fc_button = Gtk.STOCK_OPEN
     
-    def select_file_dialog(self, extension, action="open"):
-        if action == "save":
-            fc_action = Gtk.FileChooserAction.SAVE
-            fc_button = Gtk.STOCK_SAVE
-        else:
-            fc_action = Gtk.FileChooserAction.OPEN
-            fc_button = Gtk.STOCK_OPEN
-        
-        dialog = Gtk.FileChooserDialog("Please choose a file", self,
-            fc_action,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             fc_button, Gtk.ResponseType.OK))
-        
-        if action == "save" and extension == "tbc":
-            dialog.set_current_name("Untitled.tbc")
+    dialog = Gtk.FileChooserDialog("Please choose a file", window,
+        fc_action,
+        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+         fc_button, Gtk.ResponseType.OK))
+    
+    if action == "save" and extension == "tbc":
+        dialog.set_current_name("Untitled.tbc")
 
-        # Add some filters for supported content types
-        if (extension == "wav"):
-            filter_wav = Gtk.FileFilter()
-            filter_wav.set_name("WAV files")
-            filter_wav.add_mime_type("audio/x-wav")
-            dialog.add_filter(filter_wav)
-        elif (extension == "tbc"):
-            filter_tbc = Gtk.FileFilter()
-            filter_tbc.set_name("TalkBox files")
-            filter_tbc.add_mime_type("application/zip")
-            dialog.add_filter(filter_tbc)
+    # Add some filters for supported content types
+    if (extension == "wav"):
+        filter_wav = Gtk.FileFilter()
+        filter_wav.set_name("WAV files")
+        filter_wav.add_mime_type("audio/x-wav")
+        dialog.add_filter(filter_wav)
+    elif (extension == "tbc"):
+        filter_tbc = Gtk.FileFilter()
+        filter_tbc.set_name("TalkBox files")
+        filter_tbc.add_mime_type("application/zip")
+        dialog.add_filter(filter_tbc)
 
-        filter_any = Gtk.FileFilter()
-        filter_any.set_name("Any files")
-        filter_any.add_pattern("*")
-        dialog.add_filter(filter_any)
+    filter_any = Gtk.FileFilter()
+    filter_any.set_name("Any files")
+    filter_any.add_pattern("*")
+    dialog.add_filter(filter_any)
 
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            filename = dialog.get_filename()
-            print("File selected: " + filename)
-        elif response == Gtk.ResponseType.CANCEL:
-            print("Cancel clicked")
+    response = dialog.run()
+    if response == Gtk.ResponseType.OK:
+        filename = dialog.get_filename()
+        print("File selected: " + filename)
+    elif response == Gtk.ResponseType.CANCEL:
+        print("Cancel clicked")
 
-        dialog.destroy()
-        return filename
-        
+    dialog.destroy()
+    return filename
+
 if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal.SIG_DFL)
+    
     window = TalkBoxWindow()        
     window.connect("delete-event", Gtk.main_quit)
     window.show_all()
