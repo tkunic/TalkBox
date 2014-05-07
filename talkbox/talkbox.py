@@ -1,4 +1,5 @@
 from gi.repository import Gtk, Gdk
+from models import TalkBoxConf, SoundSet, PinConf
 
 UI_INFO = """
 <ui>
@@ -299,6 +300,7 @@ def select_file_dialog(extension, action="open"):
     dialog.destroy()
     return filename
 
+tbc = TalkBoxConf()
 if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal.SIG_DFL)
