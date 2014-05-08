@@ -32,7 +32,7 @@ class TalkBoxConf:
                 for ss_md in metadata:
                     soundset = SoundSet(ss_md['name'])
                     # FIXME BAD: why should TalkBoxConf know how many pins there are?
-                    for i in xrange(NUMBER_OF_PINS):
+                    for i in range(NUMBER_OF_PINS):
                         soundfile_path = ss_md[str(i)]['soundfile']
                         if soundfile_path is not None and soundfile_path != '':
                             soundset.get_pin(i).set_soundfile(zfp.extract(soundfile_path, self.tmpdir))
@@ -45,7 +45,7 @@ class TalkBoxConf:
             for soundset in self.soundsets:
                 soundset_result = {'name': soundset.get_name()}
                 # FIXME BAD: NUMBER_OF_PINS shouldn't be a concern of TalkBoxConf
-                for i in xrange(NUMBER_OF_PINS):
+                for i in range(NUMBER_OF_PINS):
                     soundset_result[i] = {'soundfile': basename(soundset.get_pin(i).get_soundfile())}
                 for resource_path in soundset.get_resource_paths():
                     zfp.write(resource_path, basename(resource_path))
@@ -73,7 +73,7 @@ class SoundSet:
     def __init__(self, name):
         self.name = name
         self.pinconfs = {}
-        for pin_num in xrange(NUMBER_OF_PINS):
+        for pin_num in range(NUMBER_OF_PINS):
             self.pinconfs[pin_num] = PinConf()
 
     def get_name(self):

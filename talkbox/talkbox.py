@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Gdk
 from models import TalkBoxConf, SoundSet, PinConf
+from player import TBPlayer
 
 UI_INFO = """
 <ui>
@@ -59,8 +60,8 @@ class TalkBoxWindow(Gtk.Window):
         toolbar = uimanager.get_widget("/ToolBar")
         rootbox.pack_start(toolbar, False, False, 0)
 
-        confbox = TBCView()
-        rootbox.pack_start(confbox, True, True, 0)
+        self.tbcview = TBCView()
+        rootbox.pack_start(self.tbcview, True, True, 0)
 
         self.add(rootbox)
 
@@ -104,7 +105,7 @@ class TalkBoxWindow(Gtk.Window):
         action_group.add_action(action_playsoundset)
 
         action_settbconboot = Gtk.Action("SetTBCOnBoot", None, None, Gtk.STOCK_APPLY)
-        action_settbconboot.connect("activate", self.on_menu_run_settbconboot)
+        action_settbconboot.connect("activate", self.on_menu_run_tbconboot)
         action_group.add_action(action_settbconboot)
 
 
@@ -122,22 +123,32 @@ class TalkBoxWindow(Gtk.Window):
     
     def on_menu_file_new(self, widget):
         print("A File|New menu item was selected.")
+        global tbc
+        tbc = TalkBoxConf()
+        self.tbcview.refresh()
 
     def on_menu_file_open(self, widget):
         print("file open")
-        print "Selected TBC file: " + select_file_dialog("tbc")
+        print("Selected TBC file: " + select_file_dialog("tbc"))
 
     def on_menu_file_save(self, widget):
         print("file save")
-        print "Selected TBC file: " + select_file_dialog("tbc", action="save")
+        print("Selected TBC file: " + select_file_dialog("tbc", action="save"))
 
     def on_menu_file_quit(self, widget):
         Gtk.main_quit()
 
     def on_menu_run_playsoundset(self, widget):
-        print("run playsoundset")
+        if player.is_playing():
+            widget.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
+            #player.stop_SoundSet()
+        else:
+            widget.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
+            # TODO? gray out sound selection until the pause button is unpaused?
+            #current_soundset = tbc.get_soundset(current_soundset_name)
+            #player.play_SoundSet(current_soundset)
 
-    def on_menu_run_settbconboot(self, widget):
+    def on_menu_run_tbconboot(self, widget):
         print("run settbconboot")
 
     def on_menu_others(self, widget):
@@ -158,13 +169,16 @@ class TBCView(Gtk.Box):
     def __init__(self):
         super(TBCView, self).__init__(spacing=6)
         
-        soundsetview = SoundSetView()
-        self.pack_start(soundsetview, True, True, 0)
+        self.soundsetview = SoundSetView()
+        self.pack_start(self.soundsetview, True, True, 0)
 
         previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         for i in range(12):
             previewbox.pack_start(PinView(i), True, True, 0)
         self.pack_start(previewbox, True, True, 0)
+        
+    def refresh(self):
+        self.soundsetview.refresh()
 
 class SoundSetView(Gtk.Box):
     def __init__(self):
@@ -200,6 +214,9 @@ class SoundSetView(Gtk.Box):
         addrm_button_box.pack_start(rm_button, True, True, 0)
 
         self.pack_start(addrm_button_box, False, True, 0)
+    
+    def refresh(self):
+        pass
         
     def on_text_edited(self, widget, path, text):
         self.liststore[path][0] = text
@@ -209,12 +226,14 @@ class SoundSetView(Gtk.Box):
         model, treeiter = selection.get_selected()
         if treeiter != None:
             print("You selected: " + model[treeiter][0])
+            global current_soundset_name
+            current_soundset_name = model[treeiter][0]
             
     def on_add_button_clicked(self, widget):
-        print "add button clicked"
+        print("add button clicked")
         
     def on_rm_button_clicked(self, widget):
-        print "rm button clicked"
+        print("rm button clicked")
     
 class PinView(Gtk.Box):
     def __init__(self, pin_num):
@@ -252,10 +271,15 @@ class PinView(Gtk.Box):
         self.pack_start(play_button, False, True, 0)
         
     def on_browse_soundfiles(self, widget, pin_num):
-        print "Soundfile for pin {0} selected: {1}".format(pin_num, select_file_dialog("wav"))
+        print("Soundfile for pin {0} selected: {1}".format(pin_num, select_file_dialog("wav")))
         
     def on_play_button_clicked(self, widget, pin_num):
-        print "Play button for pin_number {0} clicked".format(pin_num)
+        print("current_soundset_name => " + current_soundset_name)
+        current_soundset = tbc.get_soundset(current_soundset_name)
+        if current_soundset is not None:
+            sound_path = current_soundset.get_pin(pin_num).get_soundfile()
+            player.play_soundfile(sound_path)
+        print("Play button for pin_number {0} clicked".format(pin_num))
 
 def select_file_dialog(extension, action="open"):
     if action == "save":
@@ -301,6 +325,9 @@ def select_file_dialog(extension, action="open"):
     return filename
 
 tbc = TalkBoxConf()
+player = TBPlayer()
+current_soundset_name = ''
+
 if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal.SIG_DFL)
