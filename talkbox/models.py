@@ -48,7 +48,10 @@ class TalkBoxConf:
                 for i in range(NUMBER_OF_PINS):
                     soundset_result[i] = {'soundfile': basename(soundset.get_pin(i).get_soundfile())}
                 for resource_path in soundset.get_resource_paths():
-                    zfp.write(resource_path, basename(resource_path))
+                    try:
+                        zfp.getinfo(basename(resource_path))
+                    except:
+                        zfp.write(resource_path, basename(resource_path))
                 result.append(soundset_result)
             json_string = json.dumps(result, sort_keys=True, indent=4)
             zfp.writestr('metadata.json', json_string)
@@ -78,6 +81,9 @@ class SoundSet:
 
     def get_name(self):
         return self.name
+    
+    def set_name(self, new_name):
+        self.name = new_name
 
     def get_pin(self, pin_num):
         return self.pinconfs[pin_num]

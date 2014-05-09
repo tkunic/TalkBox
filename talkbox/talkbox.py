@@ -129,24 +129,33 @@ class TalkBoxWindow(Gtk.Window):
 
     def on_menu_file_open(self, widget):
         print("file open")
-        print("Selected TBC file: " + select_file_dialog("tbc"))
+        filename = select_file_dialog("tbc")
+        print("Selected TBC file: " + filename)
+        tbc_new = TalkBoxConf()
+        tbc_new.set_from_file(filename)
+        tbc = tbc_new
 
     def on_menu_file_save(self, widget):
         print("file save")
-        print("Selected TBC file: " + select_file_dialog("tbc", action="save"))
+        filename = select_file_dialog("tbc", action="save")
+        print("Selected TBC file: " + filename)
+        tbc.write_to_file(filename)
 
     def on_menu_file_quit(self, widget):
         Gtk.main_quit()
 
     def on_menu_run_playsoundset(self, widget):
         if player.is_playing():
-            widget.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
-            #player.stop_SoundSet()
+            player.stop_SoundSet()
         else:
-            widget.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
+            current_soundset = tbc.get_soundset(current_soundset_name)
+            player.play_SoundSet(current_soundset)
+            
+        if player.is_playing():
             # TODO? gray out sound selection until the pause button is unpaused?
-            #current_soundset = tbc.get_soundset(current_soundset_name)
-            #player.play_SoundSet(current_soundset)
+            widget.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
+        else:
+            widget.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
 
     def on_menu_run_tbconboot(self, widget):
         print("run settbconboot")
@@ -178,30 +187,28 @@ class TBCView(Gtk.Box):
         self.pack_start(previewbox, True, True, 0)
         
     def refresh(self):
-        self.soundsetview.refresh()
+        self.soundsetview.set_tbc(tbc)
 
 class SoundSetView(Gtk.Box):
     def __init__(self):
         super(SoundSetView, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         
         self.liststore = Gtk.ListStore(str)
-        # FIXME here only for mockup purposes
-        tk_soundsets = ["Essentials 1", "Essentials 2", "Essentials 3", "Days in Week", "Months", "Feeling", "Attendance M", "Attendance F", "Temperature"]
-        for elem in tk_soundsets:
-            self.liststore.append([elem])
+            
+        self.set_tbc(tbc)
 
-        treeview = Gtk.TreeView(model=self.liststore)
+        self.treeview = Gtk.TreeView(model=self.liststore)
 
         renderer_text = Gtk.CellRendererText()
         renderer_text.set_property("editable", True)
         column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
-        treeview.append_column(column_text)
+        self.treeview.append_column(column_text)
 
         renderer_text.connect("edited", self.on_text_edited)
-        select = treeview.get_selection()
+        select = self.treeview.get_selection()
         select.connect("changed", self.on_tree_selection_changed)
 
-        self.pack_start(treeview, True, True, 0)
+        self.pack_start(self.treeview, True, True, 0)
 
         addrm_button_box = Gtk.Box(spacing=6)
 
@@ -215,11 +222,18 @@ class SoundSetView(Gtk.Box):
 
         self.pack_start(addrm_button_box, False, True, 0)
     
-    def refresh(self):
-        pass
+    def set_tbc(self, tbc):
+        self.liststore.clear() # FIXME! this clear is a problem, it de-selects what you edited immediately after the fact
+        for soundset in tbc.list_soundsets():
+            self.liststore.append([soundset.get_name()])
         
     def on_text_edited(self, widget, path, text):
+        # FIXME terrible design. shouldn't update and keep track of so many things from here 
+        old_name = self.liststore[path][0]
+        soundset = tbc.get_soundset(old_name).set_name(text)
         self.liststore[path][0] = text
+        current_soundset = text
+        
         print("text edited: path = " + path + ", text = " + text)
 
     def on_tree_selection_changed(self, selection):
@@ -230,10 +244,15 @@ class SoundSetView(Gtk.Box):
             current_soundset_name = model[treeiter][0]
             
     def on_add_button_clicked(self, widget):
+        ss = SoundSet(self.get_untitled_name())
         print("add button clicked")
         
     def on_rm_button_clicked(self, widget):
         print("rm button clicked")
+        
+    def get_untitled_name(self):
+        # TODO increment somehow
+        return "Untitled 1"
     
 class PinView(Gtk.Box):
     def __init__(self, pin_num):
@@ -325,12 +344,13 @@ def select_file_dialog(extension, action="open"):
     return filename
 
 tbc = TalkBoxConf()
+tbc.set_from_file('/home/ehbemtu/devt/raspitap/tests/resources/bigtest.tbc') #tk_ loads a soundset by default for test purposes only
 player = TBPlayer()
 current_soundset_name = ''
 
 if __name__ == '__main__':
-    import signal
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    #import signal
+    #signal.signal(signal.SIGINT, signal.SIG_DFL)
     
     window = TalkBoxWindow()        
     window.connect("delete-event", Gtk.main_quit)

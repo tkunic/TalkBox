@@ -40,6 +40,9 @@ class TBPlayer:
     def play_SoundSet(self, soundset):
         self.stop_SoundSet()
         
+        if (soundset == None):
+            return
+        
         sounds = []
         for i in range(12):
             sound_path = soundset.get_pin(i).get_soundfile()
@@ -47,10 +50,16 @@ class TBPlayer:
             sound.set_volume(volume_level)
             sounds.append(sound)
 
-        GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
+        """GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)"""
+        print ("playing soundset: " + soundset.get_name())
+        global playing
+        playing = True
     
     def stop_SoundSet(self):
-        GPIO.remove_event_detect(7)
+        """GPIO.remove_event_detect(7)"""
+        print("stopping soundset")
+        global playing
+        playing = False
     
     def handleTouch(channel):
         touchData = mpr121.readWordData(0x5a)
@@ -75,12 +84,6 @@ class TBPlayer:
             return True
         else:
             return False"""
-        global playing
-        if not playing:
-            playing = True
-            return False
-        else:
-            playing = False
-            return True
+        return playing
 
 playing = False
