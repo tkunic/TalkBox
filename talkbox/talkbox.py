@@ -260,8 +260,13 @@ class SoundSetView(Gtk.Box):
             tbc.remove_soundset(soundset_name)
         
     def get_untitled_name(self):
-        # TODO increment somehow
-        return "Untitled 1"
+        counter = 1
+        while True:
+            name = "Untitled {0}".format(counter)
+            if tbc.get_soundset(name) != None:
+                counter = counter + 1
+            else:
+                return name
     
 class PinView(Gtk.Box):
     def __init__(self, pin_num):
