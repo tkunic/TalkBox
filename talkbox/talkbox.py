@@ -232,7 +232,8 @@ class SoundSetView(Gtk.Box):
         old_name = self.liststore[path][0]
         soundset = tbc.get_soundset(old_name).set_name(text)
         self.liststore[path][0] = text
-        current_soundset = text
+        global current_soundset_name
+        current_soundset_name = text
         
         print("text edited: path = " + path + ", text = " + text)
 
@@ -244,11 +245,19 @@ class SoundSetView(Gtk.Box):
             current_soundset_name = model[treeiter][0]
             
     def on_add_button_clicked(self, widget):
-        ss = SoundSet(self.get_untitled_name())
         print("add button clicked")
+        ss_name = self.get_untitled_name()
+        ss = SoundSet(ss_name)
+        tbc.add_soundset(ss)
+        self.liststore.append([ss_name])
         
     def on_rm_button_clicked(self, widget):
         print("rm button clicked")
+        model, treeiter = self.treeview.get_selection().get_selected()
+        if treeiter != None:
+            soundset_name = model[treeiter][0]
+            self.liststore.remove(treeiter)
+            tbc.remove_soundset(soundset_name)
         
     def get_untitled_name(self):
         # TODO increment somehow

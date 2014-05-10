@@ -64,7 +64,7 @@ class TalkBoxConf:
 
     def remove_soundset(self, soundset_name):
         soundset = self.get_soundset(soundset_name)
-        del soundset
+        self.soundsets.remove(soundset)
 
     def get_soundset(self, soundset_name):
         for soundset in self.soundsets:
