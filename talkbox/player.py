@@ -11,8 +11,8 @@ from asyncore import file_dispatcher, loop
 
 import subprocess
 
-#tk_import RPi.GPIO as GPIO
-#tk_import mpr121
+import RPi.GPIO as GPIO
+import mpr121
 
 volume_level = .60
 NUMBER_OF_PINS = 12
@@ -24,16 +24,16 @@ NUMBER_OF_PINS = 12
 class TBPlayer:
     def __init__(self):
         # Use GPIO Interrupt Pin
-        #tk_GPIO.setmode(GPIO.BOARD)
-        #tk_GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         # Use mpr121 module for everything else
-        #tk_mpr121.TOU_THRESH = 0x30
-        #tk_mpr121.REL_THRESH = 0x33
-        #tk_mpr121.setup(0x5a)
+        mpr121.TOU_THRESH = 0x30
+        mpr121.REL_THRESH = 0x33
+        mpr121.setup(0x5a)
         
         # Use pygame for sounds
-        pygame.mixer.pre_init(44100, -16, 12, 512)
+        pygame.mixer.pre_init(22050, -16, 12, 512)
         pygame.init() 
 
     def set_TalkBoxConf(self, tbc):
@@ -58,7 +58,7 @@ class TBPlayer:
                 sound.set_volume(volume_level)
                 sounds.append(sound)
 
-        #tk_ GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
+        GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
         print ("playing soundset: " + soundset.get_name())
         global playing
         playing = True
@@ -85,9 +85,7 @@ class TBPlayer:
         if soundstring is None or soundstring == '':
             return
         if os.path.exists(soundstring):
-            sound = pygame.mixer.Sound(soundstring)
-            sound.set_volume(volume_level)
-            sound.play()
+            subprocess.Popen(['aplay', soundstring])
         else:
             print "playing soundstring using espeak: " + soundstring
             tmpfile = '/tmp/espeak_buffer.wav'
@@ -95,7 +93,7 @@ class TBPlayer:
             subprocess.Popen(['aplay', tmpfile])
             
     def synth_soundfile(self, text):
-        filename = "{0}/espeak_{1}.wav".format(tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
+        filename = "{0}/espeak_{1}.wav".format(self.tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
         subprocess.call(['espeak', text, '-w', filename, '&'])
         return filename
     
