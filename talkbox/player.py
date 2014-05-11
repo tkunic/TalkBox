@@ -5,6 +5,7 @@ import pygame
 import json
 import math
 import glob
+import re
 
 import evdev
 from asyncore import file_dispatcher, loop
@@ -45,18 +46,18 @@ class TBPlayer:
         if (soundset == None):
             return
         
-        sounds = []
+        self.sounds = []
         for i in range(12):
             soundstring = soundset.get_pin(i).get_soundstring()
             if os.path.exists(soundstring):
                 sound = pygame.mixer.Sound(soundstring)
                 sound.set_volume(volume_level)
-                sounds.append(sound)
+                self.sounds.append(sound)
             else:
                 filename = self.synth_soundfile(soundstring)
                 sound = pygame.mixer.Sound(filename)
                 sound.set_volume(volume_level)
-                sounds.append(sound)
+                self.sounds.append(sound)
 
         GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
         print ("playing soundset: " + soundset.get_name())
@@ -69,13 +70,13 @@ class TBPlayer:
         global playing
         playing = False
     
-    def handleTouch(channel):
+    def handleTouch(self, channel):
         touchData = mpr121.readWordData(0x5a)
     
         for i in range(12):
             if (touchData & (1<<i)):
                 #print( 'Pin ' + str(i) + ' was just touched')
-                sounds[i].play()
+                self.sounds[i].play()
             else:
                 pass
     
@@ -93,7 +94,7 @@ class TBPlayer:
             subprocess.Popen(['aplay', tmpfile])
             
     def synth_soundfile(self, text):
-        filename = "{0}/espeak_{1}.wav".format(self.tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
+        filename = "{0}/espeak_{1}.wav".format('/tmp', re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
         subprocess.call(['espeak', text, '-w', filename, '&'])
         return filename
     
