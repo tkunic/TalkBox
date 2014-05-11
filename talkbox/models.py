@@ -5,11 +5,17 @@
 
 import os
 from os.path import basename
+import subprocess
+import tempfile
+import shutil
+
+import re
 import json
 from zipfile import ZipFile
-import tempfile
 
 NUMBER_OF_PINS = 12
+TMPDIR_PREFIX = "tbc_"
+tmpdir = None
 
 class TalkBoxConf:
 
@@ -22,7 +28,15 @@ class TalkBoxConf:
         load its contents into this TalkBoxConf."""
 
         # To avoid more complicated solutions, extracts the *.tbc archive to tempfile.mkdtemp('tbc') that starts with 'tbc'. Remember to delete when done.
-        self.tmpdir = tempfile.mkdtemp(prefix='tbc')
+        # remove all other temp files.
+        for path in os.listdir('/tmp/'):
+            if re.search('^' + TMPDIR_PREFIX, path):
+                try:
+                    shutil.rmtree('/tmp/' + path)
+                except:
+                    print "deleting {0} failed.".format('/tmp/'+path)
+        global tmpdir
+        tmpdir = tempfile.mkdtemp(prefix=TMPDIR_PREFIX)
 
         with ZipFile(file_path) as zfp:
             with zfp.open('metadata.json') as metadatafp:
@@ -35,7 +49,13 @@ class TalkBoxConf:
                     for i in range(NUMBER_OF_PINS):
                         soundfile_path = ss_md[str(i)]['soundfile']
                         if soundfile_path is not None and soundfile_path != '':
-                            soundset.get_pin(i).set_soundfile(zfp.extract(soundfile_path, self.tmpdir))
+                            filename = zfp.extract(soundfile_path, tmpdir)
+                            soundset.get_pin(i).set_soundfile(filename)
+                            if re.search('espeak_.*', filename) is not None:
+                                soundstring = ss_md[str(i)]['soundstring']
+                            else:
+                                soundstring = filename
+                            soundset.get_pin(i).set_soundstring(soundstring)
                     self.soundsets.append(soundset)
 
     def write_to_file(self, filename):
@@ -46,7 +66,13 @@ class TalkBoxConf:
                 soundset_result = {'name': soundset.get_name()}
                 # FIXME BAD: NUMBER_OF_PINS shouldn't be a concern of TalkBoxConf
                 for i in range(NUMBER_OF_PINS):
-                    soundset_result[i] = {'soundfile': basename(soundset.get_pin(i).get_soundfile())}
+                    soundfile = basename(soundset.get_pin(i).get_soundfile())
+                    soundstring = soundset.get_pin(i).get_soundstring()
+                    print soundfile, soundstring
+                    soundset_result[i] = {
+                                          'soundfile': soundfile,
+                                          'soundstring': soundstring
+                                          }
                 for resource_path in soundset.get_resource_paths():
                     try:
                         zfp.getinfo(basename(resource_path))
@@ -103,13 +129,30 @@ class SoundSet:
 class PinConf:
     def __init__(self):
         self.soundfile_path = ''
+        self.soundstring = ''
+
+    def set_soundstring(self, soundstring):
+        self.soundstring = soundstring
+    
+    def get_soundstring(self):
+        if self.soundstring == "":
+            return self.soundfile_path
+        else:
+            return self.soundstring
 
     def set_soundfile(self, soundfile_path):
         self.soundfile_path = soundfile_path
 
     def get_soundfile(self):
-        return self.soundfile_path
+        if os.path.exists(self.soundfile_path):
+            return self.soundfile_path
+        elif self.soundstring != "":
+            # if soundstring isn't a filename, synths speech from this text using espeak and returns filepath to synthesized sound."""
+            return self.synth_soundfile(self.soundstring)
+        else:
+            return ''
 
-    def set_soundsynth(self, text):
-        """Synths speech from this text using espeak and writes result to a file."""
-        pass
+    def synth_soundfile(self, text):
+        filename = "{0}/espeak_{1}.wav".format(tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
+        subprocess.call(['espeak', text, '-w', filename])
+        return filename

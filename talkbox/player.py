@@ -9,6 +9,8 @@ import glob
 import evdev
 from asyncore import file_dispatcher, loop
 
+import subprocess
+
 #tk_import RPi.GPIO as GPIO
 #tk_import mpr121
 
@@ -71,12 +73,20 @@ class TBPlayer:
             else:
                 pass
     
-    def play_soundfile(self, filepath):
+    def play_soundstring(self, soundstring):
         # TODO? Implement cache table for sounds here with capacity 5 to avoid
         # reading from the disk all the time
-        sound = pygame.mixer.Sound(sound_path)
-        sound.set_volume(volume_level)
-        sound.play()
+        if soundstring is None or soundstring == '':
+            return
+        if os.path.exists(soundstring):
+            sound = pygame.mixer.Sound(soundstring)
+            sound.set_volume(volume_level)
+            sound.play()
+        else:
+            print "playing soundstring using espeak: " + soundstring
+            tmpfile = '/tmp/espeak_buffer.wav'
+            subprocess.call(['espeak', soundstring, '-w', tmpfile])
+            subprocess.call(['aplay', tmpfile])
     
     def is_playing(self):
         #tk_ if this works use it, if not, keep playing var

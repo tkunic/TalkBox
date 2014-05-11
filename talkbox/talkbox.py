@@ -131,9 +131,9 @@ class TalkBoxWindow(Gtk.Window):
         print("file open")
         filename = select_file_dialog("tbc")
         print("Selected TBC file: " + filename)
-        tbc_new = TalkBoxConf()
-        tbc_new.set_from_file(filename)
-        tbc = tbc_new
+        tbc.set_from_file(filename)
+        self.tbcview.refresh()
+        
 
     def on_menu_file_save(self, widget):
         print("file save")
@@ -179,15 +179,15 @@ class TBCView(Gtk.Box):
         super(TBCView, self).__init__(spacing=6)
         
         self.soundsetview = SoundSetView()
-        self.pack_start(self.soundsetview, True, True, 0)
+        self.pack_start(self.soundsetview, False, True, 0)
 
-        previewbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        for i in range(12):
-            previewbox.pack_start(PinView(i), True, True, 0)
-        self.pack_start(previewbox, True, True, 0)
+        self.previewbox = PreviewBox()
+        
+        self.pack_start(self.previewbox, True, True, 0)
         
     def refresh(self):
         self.soundsetview.set_tbc(tbc)
+        self.previewbox.set_soundset(tbc.get_soundset(current_soundset_name))
 
 class SoundSetView(Gtk.Box):
     def __init__(self):
@@ -201,7 +201,8 @@ class SoundSetView(Gtk.Box):
 
         renderer_text = Gtk.CellRendererText()
         renderer_text.set_property("editable", True)
-        column_text = Gtk.TreeViewColumn("SoundSet Name", renderer_text, text=0)
+        # FIXME: the " " * 30 is a dirty hack to set minimum width
+        column_text = Gtk.TreeViewColumn("SoundSet Name" + " " * 30, renderer_text, text=0)
         self.treeview.append_column(column_text)
 
         renderer_text.connect("edited", self.on_text_edited)
@@ -243,6 +244,7 @@ class SoundSetView(Gtk.Box):
             print("You selected: " + model[treeiter][0])
             global current_soundset_name
             current_soundset_name = model[treeiter][0]
+            window.tbcview.previewbox.set_soundset(tbc.get_soundset(current_soundset_name))
             
     def on_add_button_clicked(self, widget):
         print("add button clicked")
@@ -267,52 +269,73 @@ class SoundSetView(Gtk.Box):
                 counter = counter + 1
             else:
                 return name
-    
+
+class PreviewBox(Gtk.Box):
+    def __init__(self):
+        super(PreviewBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.pinviews = []
+        for i in range(12):
+            self.pinviews.append(PinView(i))
+            self.pack_start(self.pinviews[i], True, True, 0)
+            
+    def set_soundset(self, soundset):
+        if soundset is None:
+            self.hide()
+            return
+        for i, pinview in enumerate(self.pinviews):
+            soundstring = soundset.get_pin(i).get_soundstring()
+            print soundstring
+            pinview.set_entry_text(soundstring)
+        self.show()
+        
+
 class PinView(Gtk.Box):
     def __init__(self, pin_num):
         super(PinView, self).__init__(spacing=6)
+        self.pin_num = pin_num
         
         pin_num_label = Gtk.Label(xalign=0)
         pin_num_label.set_markup("<span font=\"32\">{0}</span>".format("  " + str(pin_num) if (pin_num < 10) else pin_num))
         self.pack_start(pin_num_label, False, False, 0)
         
-        switchbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.pack_start(switchbox, True, True, 0)
-
-        stack = Gtk.Stack()
-        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        stack.set_transition_duration(500)
-        
-        synth_entry = Gtk.Entry()
-        stack.add_titled(synth_entry, "synth_entry", "Synth Entry")
-        
         filebox = Gtk.Box(spacing=6)
-        filebutton = Gtk.Button("Browse...")
-        filebutton.connect("clicked", self.on_browse_soundfiles, pin_num)
-        filebox.pack_start(filebutton, True, True, 0)
-        fileentry = Gtk.Entry()
-        filebox.pack_start(fileentry, True, True, 0)
-        stack.add_titled(filebox, "filebox", "Sound File")
-
-        stack_switcher = Gtk.StackSwitcher()
-        stack_switcher.set_stack(stack)
-        switchbox.pack_start(stack_switcher, True, True, 0)
-        switchbox.pack_start(stack, True, True, 0)
+        self.fileentry = Gtk.Entry()
+        self.fileentry.connect("changed", self.on_edit)
+        filebox.pack_start(self.fileentry, True, True, 0)
+        filebutton = Gtk.Button(label="Open Sound File", image=Gtk.Image(stock=Gtk.STOCK_OPEN))
+        filebutton.connect("clicked", self.on_browse_soundfiles)
+        filebox.pack_start(filebutton, False, False, 0)
+        self.pack_start(filebox, True, True, 0)
         
         play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
-        play_button.connect("clicked", self.on_play_button_clicked, pin_num)
+        play_button.connect("clicked", self.on_play_button_clicked)
         self.pack_start(play_button, False, True, 0)
         
-    def on_browse_soundfiles(self, widget, pin_num):
-        print("Soundfile for pin {0} selected: {1}".format(pin_num, select_file_dialog("wav")))
+    def get_entry_text(self):
+        return self.fileentry.get_text()
+    
+    def set_entry_text(self, text):
+        self.fileentry.set_text(text)
+    
+    def on_edit(self, widget):
+        text = self.fileentry.get_text()
+        print "edit at pin {0}, new text: {1}".format(self.pin_num, text)
+        tbc.get_soundset(current_soundset_name).get_pin(self.pin_num).set_soundstring(text)
+        tbc.get_soundset(current_soundset_name).get_pin(self.pin_num).set_soundfile('')
         
-    def on_play_button_clicked(self, widget, pin_num):
-        print("current_soundset_name => " + current_soundset_name)
+    def on_browse_soundfiles(self, widget):
+        wavpath = select_file_dialog("wav")
+        self.fileentry.set_text(wavpath)
+        print("Soundfile for pin {0} selected: {1}".format(self.pin_num, wavpath))
+        
+    def on_play_button_clicked(self, widget):
         current_soundset = tbc.get_soundset(current_soundset_name)
         if current_soundset is not None:
-            sound_path = current_soundset.get_pin(pin_num).get_soundfile()
-            player.play_soundfile(sound_path)
-        print("Play button for pin_number {0} clicked".format(pin_num))
+            soundstring = current_soundset.get_pin(self.pin_num).get_soundstring()
+            print "playing soundstring: " + soundstring
+            player.play_soundstring(soundstring)
+        print("Play button for pin_number {0} clicked".format(self.pin_num))
+        
 
 def select_file_dialog(extension, action="open"):
     if action == "save":
@@ -358,7 +381,7 @@ def select_file_dialog(extension, action="open"):
     return filename
 
 tbc = TalkBoxConf()
-tbc.set_from_file('/home/ehbemtu/devt/raspitap/tests/resources/bigtest.tbc') #tk_ loads a soundset by default for test purposes only
+#tbc.set_from_file('/home/ehbemtu/devt/raspitap/tests/resources/bigtest.tbc') #tk_ loads a soundset by default for test purposes only
 player = TBPlayer()
 current_soundset_name = ''
 
