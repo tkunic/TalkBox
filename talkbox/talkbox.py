@@ -321,7 +321,6 @@ class PinView(Gtk.Box):
         text = self.fileentry.get_text()
         print "edit at pin {0}, new text: {1}".format(self.pin_num, text)
         tbc.get_soundset(current_soundset_name).get_pin(self.pin_num).set_soundstring(text)
-        tbc.get_soundset(current_soundset_name).get_pin(self.pin_num).set_soundfile('')
         
     def on_browse_soundfiles(self, widget):
         wavpath = select_file_dialog("wav")

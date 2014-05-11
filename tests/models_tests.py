@@ -24,9 +24,9 @@ def test_assinging_soundfile_to_pin():
     soundset1 = SoundSet(soundset_name)
     tbc1.add_soundset(soundset1)
 
-    tbc1.get_soundset(soundset_name).get_pin(1).set_soundfile(wav_path)
+    tbc1.get_soundset(soundset_name).get_pin(1).set_soundstring(wav_path)
 
-    assert_equal(tbc1.get_soundset(soundset_name).get_pin(1).get_soundfile(), wav_path)
+    assert_equal(tbc1.get_soundset(soundset_name).get_pin(1).get_soundstring(), wav_path)
 
 def test_write_read_empty_TalkBoxConf():
     """Write and read an empty TalkBoxConf to disk."""
@@ -48,15 +48,17 @@ def test_write_read_wav_TalkBoxConf():
 
     soundset1 = SoundSet('soundset1')
     tbc1.add_soundset(soundset1)
-    soundset1.get_pin(1).set_soundfile(wav_path)
-    assert_equal(soundset1.get_pin(1).get_soundfile(), wav_path)
+    soundset1.get_pin(1).set_soundstring(wav_path)
+    assert_equal(soundset1.get_pin(1).get_soundstring(), wav_path)
 
     tbc1.write_to_file(tbc_path)
     
     tbc2 = TalkBoxConf()
     tbc2.set_from_file(tbc_path)
 
-    gotten_wav_path = tbc2.get_soundset('soundset1').get_pin(1).get_soundfile()
+    gotten_wav_path = tbc2.get_soundset('soundset1').get_pin(1).get_soundstring()
+    print "gotten => " + gotten_wav_path
+    print "wav_path => " + wav_path
     assert_equal(partial_file_checksum(gotten_wav_path), partial_file_checksum(wav_path))
 
 def test_tbc_remove_soundset():

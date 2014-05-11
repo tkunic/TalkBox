@@ -27,9 +27,9 @@ class TalkBoxConf:
         and a metadata.json file assigning them to soundsets and pins),
         load its contents into this TalkBoxConf."""
 
-        # To avoid more complicated solutions, extracts the *.tbc archive to tempfile.mkdtemp('tbc') that starts with 'tbc'. Remember to delete when done.
-        # remove all other temp files.
+        # To avoid more complicated solutions, extracts the *.tbc archive to temporary dir.
         for path in os.listdir('/tmp/'):
+            # remove leftover temporary directories
             if re.search('^' + TMPDIR_PREFIX, path):
                 try:
                     shutil.rmtree('/tmp/' + path)
@@ -47,14 +47,11 @@ class TalkBoxConf:
                     soundset = SoundSet(ss_md['name'])
                     # FIXME BAD: why should TalkBoxConf know how many pins there are?
                     for i in range(NUMBER_OF_PINS):
-                        soundfile_path = ss_md[str(i)]['soundfile']
-                        if soundfile_path is not None and soundfile_path != '':
-                            filename = zfp.extract(soundfile_path, tmpdir)
-                            soundset.get_pin(i).set_soundfile(filename)
-                            if re.search('espeak_.*', filename) is not None:
-                                soundstring = ss_md[str(i)]['soundstring']
-                            else:
-                                soundstring = filename
+                        soundstring = ss_md[str(i)]['soundstring']
+                        if soundstring.lower().endswith(".wav"):
+                            filename = zfp.extract(soundstring, tmpdir)
+                            soundset.get_pin(i).set_soundstring(filename)
+                        else:
                             soundset.get_pin(i).set_soundstring(soundstring)
                     self.soundsets.append(soundset)
 
@@ -66,19 +63,16 @@ class TalkBoxConf:
                 soundset_result = {'name': soundset.get_name()}
                 # FIXME BAD: NUMBER_OF_PINS shouldn't be a concern of TalkBoxConf
                 for i in range(NUMBER_OF_PINS):
-                    soundfile = basename(soundset.get_pin(i).get_soundfile())
                     soundstring = soundset.get_pin(i).get_soundstring()
-                    print soundfile, soundstring
-                    soundset_result[i] = {
-                                          'soundfile': soundfile,
-                                          'soundstring': soundstring
-                                          }
+                    if os.path.exists(soundstring):
+                        soundstring = basename(soundset.get_pin(i).get_soundstring())
+                    soundset_result[i] = {'soundstring': soundstring}
+                result.append(soundset_result)
                 for resource_path in soundset.get_resource_paths():
                     try:
                         zfp.getinfo(basename(resource_path))
                     except:
                         zfp.write(resource_path, basename(resource_path))
-                result.append(soundset_result)
             json_string = json.dumps(result, sort_keys=True, indent=4)
             zfp.writestr('metadata.json', json_string)
 
@@ -118,39 +112,21 @@ class SoundSet:
         """Returns a list of paths to resources used by this SoundSet."""
         result = []
         for pin_num, pin_conf in self.pinconfs.iteritems():
-            soundfile_path = pin_conf.get_soundfile()
-            if os.path.exists(soundfile_path):
-                result.append(os.path.abspath(soundfile_path))
-            elif soundfile_path is not None and soundfile_path != '':
-                raise Exception("Unknown resource: " + soundfile_path)
+            soundstring = pin_conf.get_soundstring()
+            if os.path.exists(soundstring):
+                result.append(os.path.abspath(soundstring))
         return result
                 
 
 class PinConf:
     def __init__(self):
-        self.soundfile_path = ''
         self.soundstring = ''
 
     def set_soundstring(self, soundstring):
         self.soundstring = soundstring
     
     def get_soundstring(self):
-        if self.soundstring == "":
-            return self.soundfile_path
-        else:
-            return self.soundstring
-
-    def set_soundfile(self, soundfile_path):
-        self.soundfile_path = soundfile_path
-
-    def get_soundfile(self):
-        if os.path.exists(self.soundfile_path):
-            return self.soundfile_path
-        elif self.soundstring != "":
-            # if soundstring isn't a filename, synths speech from this text using espeak and returns filepath to synthesized sound."""
-            return self.synth_soundfile(self.soundstring)
-        else:
-            return ''
+        return self.soundstring
 
     def synth_soundfile(self, text):
         filename = "{0}/espeak_{1}.wav".format(tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
