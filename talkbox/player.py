@@ -58,13 +58,13 @@ class TBPlayer:
                 sound.set_volume(volume_level)
                 sounds.append(sound)
 
-        # GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
+        #tk_ GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
         print ("playing soundset: " + soundset.get_name())
         global playing
         playing = True
     
     def stop_SoundSet(self):
-        """GPIO.remove_event_detect(7)"""
+        #tk _ GPIO.remove_event_detect(7)
         print("stopping soundset")
         global playing
         playing = False
