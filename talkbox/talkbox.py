@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from gi.repository import Gtk, Gdk
 from models import TalkBoxConf, SoundSet, PinConf
 from player import TBPlayer
