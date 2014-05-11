@@ -159,6 +159,8 @@ class TalkBoxWindow(Gtk.Window):
 
     def on_menu_run_tbconboot(self, widget):
         print("run settbconboot")
+        player.set_TalkBoxConf(tbc)
+        alert("TalkBox boot configuration set!")
 
     def on_menu_others(self, widget):
         print("Menu item " + widget.get_name() + " was selected")
@@ -379,10 +381,16 @@ def select_file_dialog(extension, action="open"):
     dialog.destroy()
     return filename
 
+def alert(msg):
+    dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)
+    dialog.run()
+    dialog.destroy()
+
+
 tbc = TalkBoxConf()
 #tbc.set_from_file('/home/ehbemtu/devt/raspitap/tests/resources/bigtest.tbc') #tk_ loads a soundset by default for test purposes only
 player = TBPlayer()
-current_soundset_name = ''
+current_soundset_name = '' # FIXME should abolish this in favour of querying the selection
 
 if __name__ == '__main__':
     #import signal

@@ -36,7 +36,7 @@ class TBPlayer:
         pygame.mixer.pre_init(44100, -16, 12, 512)
         pygame.init() 
 
-    def play_TalkBoxConf(self, tbc):
+    def set_TalkBoxConf(self, tbc):
         pass
     
     def play_SoundSet(self, soundset):
@@ -47,12 +47,18 @@ class TBPlayer:
         
         sounds = []
         for i in range(12):
-            sound_path = soundset.get_pin(i).get_soundfile()
-            sound = pygame.mixer.Sound(sound_path)
-            sound.set_volume(volume_level)
-            sounds.append(sound)
+            soundstring = soundset.get_pin(i).get_soundstring()
+            if os.path.exists(soundstring):
+                sound = pygame.mixer.Sound(soundstring)
+                sound.set_volume(volume_level)
+                sounds.append(sound)
+            else:
+                filename = self.synth_soundfile(soundstring)
+                sound = pygame.mixer.Sound(filename)
+                sound.set_volume(volume_level)
+                sounds.append(sound)
 
-        """GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)"""
+        # GPIO.add_event_detect(7, GPIO.FALLING, callback=self.handleTouch)
         print ("playing soundset: " + soundset.get_name())
         global playing
         playing = True
@@ -86,7 +92,12 @@ class TBPlayer:
             print "playing soundstring using espeak: " + soundstring
             tmpfile = '/tmp/espeak_buffer.wav'
             subprocess.call(['espeak', soundstring, '-w', tmpfile])
-            subprocess.call(['aplay', tmpfile])
+            subprocess.Popen(['aplay', tmpfile])
+            
+    def synth_soundfile(self, text):
+        filename = "{0}/espeak_{1}.wav".format(tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
+        subprocess.call(['espeak', text, '-w', filename, '&'])
+        return filename
     
     def is_playing(self):
         #tk_ if this works use it, if not, keep playing var

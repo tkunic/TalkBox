@@ -128,7 +128,3 @@ class PinConf:
     def get_soundstring(self):
         return self.soundstring
 
-    def synth_soundfile(self, text):
-        filename = "{0}/espeak_{1}.wav".format(tmpdir, re.sub('[^\d\w]', '', text.encode('ascii', 'ignore')))
-        subprocess.call(['espeak', text, '-w', filename])
-        return filename
