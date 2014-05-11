@@ -17,7 +17,7 @@ Setup Instructions
 ------------------
 
 ``` bash
-sudo apt-get install libgtk-3-dev python-smbus i2c-tools python-dev python-pip
+sudo apt-get install libgtk-3-dev python-smbus i2c-tools python-dev python-pip espeak
 sudo apt-get update; sudo apt-get upgrade; sudo apt-get dist-upgrade
 sudo pip install evdev
 ```
@@ -35,4 +35,4 @@ and reboot. To test, run:
 
 `sudo i2cdetect -y 1`
 
-
+And you should see the mpr121 chip as a device called '5a'.
