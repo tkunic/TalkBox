@@ -74,7 +74,7 @@
 </ul>
 
 <div style="float: right, height: 600px">
-[A schematic showing interconnections between TalkBox and the MPR121 capacitative touch sensor](/TalkBox/public/images/schematic.png)
+![A schematic showing interconnections between TalkBox and the MPR121 capacitative touch sensor](tkunic.github.io/TalkBox/public/images/schematic.png)
 </div>
 
 <p>A MPR121 capacitive touch sensor board is used to create easy to operate buttons that require only touch but no pressure. The schematic can be found <a href="https://github.com/tkunic/TalkBox/tree/master/docs">here</a>. Each of the pins labelled 0-11 can be connected to a conductive pad (like a piece of aluminium foil) to create a button. The rest of the assembly process consists of plugging in 5 wires from the MPR121 to the Raspberry Pi. The design has been kept simple to facilitate activities where the students could participate in the assembly of their own devices. You can see the schematic on the right hand side.</p>
@@ -89,7 +89,11 @@
 
 <h2>Software</h2>
 
-<p>You will need to install the TalkBox software onto a Raspberry Pi. Please begin by downloading the archive from one of the links in the sidebar to the Pi. Unpack the archive into your home directory (<code>/home/pi/</code>).</p>
+<p>1.) Download the <a href="http://sector.aml.yorku.ca/talkbox-v1.2-140511.img">TalkBox image file</a>.
+2.) Put it onto an SD card following <a href="http://elinux.org/RPi_Easy_SD_Card_Setup">this guide</a>.
+3.) Plug the card into the Raspberry Pi you prepared above, and you are done!</p>
+
+<p>For the more technically inclined, here is an overview of the manual process to install the TalkBox software onto a Raspberry Pi. Please begin by downloading the archive from one of the links in the sidebar to the Pi. Unpack the archive into your home directory (<code>/home/pi/</code>).</p>
 
 <blockquote>
 <p>Please note that at a later date these instructions will be replaced with a simple setup utility.</p>
@@ -97,7 +101,7 @@
 
 <p>Next, install the dependencies for TalkBox by running the following commands from a terminal (internet connection required):</p>
 <div class="highlight"><pre><code class="bash language-bash" data-lang="bash">sudo apt-get update<span class="p">;</span> sudo apt-get upgrade<span class="p">;</span> sudo apt-get dist-upgrade
-sudo apt-get install python-smbus i2c-tools python-dev python-pip
+sudo apt-get install python-smbus i2c-tools python-dev python-pip espeak
 sudo pip install evdev
 </code></pre></div>
 <p>Next, open /etc/modules (via <code>nano /etc/modules</code>) and add:
