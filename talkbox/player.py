@@ -12,8 +12,11 @@ from asyncore import file_dispatcher, loop
 
 import subprocess
 
-import RPi.GPIO as GPIO
-import mpr121
+try:
+    import RPi.GPIO as GPIO
+    import mpr121
+except:
+    print "not running on pi"
 
 volume_level = .60
 NUMBER_OF_PINS = 12
@@ -24,14 +27,17 @@ NUMBER_OF_PINS = 12
 
 class TBPlayer:
     def __init__(self):
-        # Use GPIO Interrupt Pin
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        
-        # Use mpr121 module for everything else
-        mpr121.TOU_THRESH = 0x30
-        mpr121.REL_THRESH = 0x33
-        mpr121.setup(0x5a)
+        try:
+            # Use GPIO Interrupt Pin
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            
+            # Use mpr121 module for everything else
+            mpr121.TOU_THRESH = 0x30
+            mpr121.REL_THRESH = 0x33
+            mpr121.setup(0x5a)
+        except:
+            print "not running on pi"
         
         # Use pygame for sounds
         pygame.mixer.pre_init(22050, -16, 12, 512)
