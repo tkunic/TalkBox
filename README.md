@@ -5,6 +5,13 @@ The goal of the TalkBox project is to develop an open-source, open-hardware Spee
 
 Please see [here](http://tkunic.github.io/TalkBox) for setup instructions and details.
 
+
+Hardware
+--------
+- [MPR121 Capacitive Touch Sensor Breakout Board](https://www.sparkfun.com/products/9695)
+- [RaspberryPi](http://www.raspberrypi.org/)
+- some headers and wires
+
 # Notice
 
 The mpr121.py is derived from Scott Garner's [Beetbox](http://scott.j38.net/interactive/beetbox/) project, which is in turn based on [an Arduino example by Jim Lindblom](http://bildr.org/2011/05/mpr121_arduino/).
