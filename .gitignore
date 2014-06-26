@@ -35,3 +35,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# c9
+.c9revisions/
+.settings
