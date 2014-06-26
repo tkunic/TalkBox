@@ -6,8 +6,8 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Boots into talkbox instead of shell when the pi powers on.
-# Description:       Boots into talkbox instead of shell when the pi powers on.
+# Short-Description: Runs TalkBox as daemon when the pi is powered on.
+# Description:       Runs TalkBox as daemon when the pi is powered on.
 ### END INIT INFO
  
 # Change the next 3 lines to suit where you install your script and what you want to call it
