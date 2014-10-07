@@ -1,0 +1,32 @@
+.pinrow {
+    display: block;
+    clear: both;
+    position: relative;
+}
+
+.pinnumber {
+    width: 60px;
+    font-size: 36;
+    line-height: 48px;
+}
+
+.filename {
+    max-width: 380px;
+    min-width: 140px;
+    width: 30%;
+    line-height: 48px;
+}
+
+.uploadbutton {
+    line-height: 48px;
+}
+
+.savebutton {
+    display: block;
+    clear: both;
+    position: relative;
+}
+
+.float-left {
+    float: left;
+}
