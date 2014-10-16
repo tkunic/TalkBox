@@ -9,6 +9,8 @@ import mpr121
 import re
 import json
 
+conf_path = '/home/pi/.tbconf/conf.json'
+
 # Use GPIO Interrupt Pin
 
 GPIO.setmode(GPIO.BOARD)
@@ -29,7 +31,7 @@ sounds = range(1, 13)
 
 numpattern = re.compile('\d+')
 conf = {}
-with open('/home/pi/.tbconf/conf.json', 'r') as fin:
+with open(conf_path, 'r') as fin:
 	conf = json.load(fin)
 for pin in conf:
 	print pin
@@ -39,30 +41,11 @@ for pin in conf:
 for sound in sounds:
 	sound.set_volume(1.0)
 
-# Track touches
-
-touches = [0,0,0,0,0,0,0,0,0,0,0,0];
-
+# Detect touches
 while True:
-
-	if (GPIO.input(7)): # Interupt pin is high
-		pass
-	else: # Interupt pin is low
-
+	if not GPIO.input(7): # Interupt pin is low
 		touchData = mpr121.readWordData(0x5a)
-
-		for i in range(12):
+		for i in xrange(12):
 			if (touchData & (1<<i)):
-
-				if (touches[i] == 0):
-
-					print( 'Pin ' + str(i) + ' was just touched')
-
-					sounds[i].play()
-
-				touches[i] = 1;
-			else:
-				if (touches[i] == 1):
-					print( 'Pin ' + str(i) + ' was just released')
-				touches[i] = 0;
+				sounds[i].play()
 
