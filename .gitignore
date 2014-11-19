@@ -39,3 +39,6 @@ nosetests.xml
 # c9
 .c9revisions/
 .settings
+
+# gedit
+*.*~
