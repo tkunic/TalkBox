@@ -5,7 +5,7 @@ This are instructions to make TalkBox start up when your Pi boots:
 
 Make sure the TalkBox folder is in /home/pi/
 
-Move the talkbox.sh script into /etc/init.d:
+Copy the talkbox.sh script into /etc/init.d:
 
 ```
 sudo cp talkbox.sh /etc/init.d
@@ -16,8 +16,6 @@ To actually add it to rc.d directories, run:
 ```
 sudo update-rc.d talkbox.sh defaults
 ```
-
-
 
 And you are done!
 
