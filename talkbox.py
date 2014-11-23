@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import threading
 import logging
 import os
 import subprocess
@@ -166,18 +165,19 @@ class TalkBoxWeb(web.application):
         func = self.wsgifunc(*middleware)
         return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
-def button_worker():
-    while True:
-        if not GPIO.input(7) and not pygame.mixer.get_busy(): # Interupt pin is low and no sound is playing
-            touchData = mpr121.readWordData(0x5a)
-            for i in xrange(num_pins):
-                if (touchData & (1<<i)):
-                    sound_set.play_pin(i + 1)
+
+def handle_touch(channel):
+    touchData = mpr121.readWordData(0x5a)
+    if not pygame.mixer.get_busy(): # if no sound is playing
+        for i in xrange(num_pins):
+            if (touchData & (1<<i)):
+                sound_set.play_pin(i + 1)
+
 
 if __name__ == "__main__":
     # Init GPIO Interrupt Pin
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(7, GPIO.IN)
+    GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # Init mpr121 touch sensor
     mpr121.TOU_THRESH = 0x30
@@ -190,11 +190,8 @@ if __name__ == "__main__":
 
     # FIXME: shouldn't be global, but short on time
     sound_set = SoundSet()
-    button_thread = None
-
-    # Init button worker thread
-    button_thread = threading.Thread(name='button_worker', target=button_worker)
-    button_thread.start()
+    # Add callback to pin 7 (interrupt)
+    GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
 
     # Init Web (which in turn inits buttons)
     # TODO: add further URLs, for example to test I2C and other statuses.
