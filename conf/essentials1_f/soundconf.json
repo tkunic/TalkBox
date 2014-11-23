@@ -1,0 +1,66 @@
+{
+  "soundset_name": "essentials1_f",
+  "soundset_filename": "essentials1_f.wav",
+  "sounds": {
+    "0": {
+      "filename":"yes.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"no.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"hello.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"goodbye.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"thank_you.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"youre_welcome.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"need_suction.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"feel_sick.wav",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"mouth_dry.wav",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"need_help.wav",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"need_break.wav",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"upset.wav",
+      "image": "",
+      "description": ""
+    }
+  }
+}

@@ -1,0 +1,7 @@
+Last update: 2014-02-01
+
+Numbers downloaded from:
+http://evolution.voxeo.com/library/audio/prompts/numbers/index.jsp
+
+And the number.wav file from:
+http://commons.wikimedia.org/wiki/File:En-us-number.ogg

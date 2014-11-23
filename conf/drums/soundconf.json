@@ -1,0 +1,67 @@
+{
+  "soundset_name": "drums",
+  "soundset_filename": "drum.wav",  
+  "sounds": {
+    "0": {
+      "filename":"kick.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"snare.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"closed.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"open.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"cymbal.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"clap.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+
+  }
+}

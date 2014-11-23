@@ -1,0 +1,66 @@
+{
+  "soundset_name": "weather",
+  "soundset_filename": "weather.wav",
+  "sounds": {
+    "0": {
+      "filename":"sunny.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"cloudy.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"windy.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"raining.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"snowing.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

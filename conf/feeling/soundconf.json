@@ -1,0 +1,66 @@
+{
+  "soundset_name": "feeling",
+  "soundset_filename": "feeling.wav",
+  "sounds": {
+    "0": {
+      "filename":"happy.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"sad.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"excited.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"tired.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"proud.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"sick.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

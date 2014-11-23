@@ -1,0 +1,65 @@
+{
+  "name": "hello.wav",
+  "sounds": {
+    "0": {
+      "filename":"need_suction.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"feel_sick.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"mouth_dry.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"need_help.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"need_break.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"upset.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"go_for_walk.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"need_washroom.wav",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"like_more.wav",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"too_noisy.wav",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "soundset_name": "week",
+  "soundset_filename": "week.wav",
+  "sounds": {
+    "0": {
+      "filename":"monday.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"tuesday.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"wednesday.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"thursday.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"friday.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"saturday.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"sunday.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

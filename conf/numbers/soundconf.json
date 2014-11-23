@@ -1,0 +1,66 @@
+{
+  "soundset_name": "numbers",
+  "soundset_filename": "number.wav",
+  "sounds": {
+    "0": {
+      "filename":"1.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"2.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"3.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"4.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"5.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"6.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"7.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"8.wav",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"9.wav",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"10.wav",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"11.wav",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"12.wav",
+      "image": "",
+      "description": ""
+    }
+  }
+}

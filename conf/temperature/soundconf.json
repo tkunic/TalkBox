@@ -1,0 +1,66 @@
+{
+  "soundset_name": "temperature",
+  "soundset_filename": "temperature.wav",
+  "sounds": {
+    "0": {
+      "filename":"hot.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"cold.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"just_right.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

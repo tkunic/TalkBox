@@ -1,0 +1,66 @@
+{
+  "soundset_name": "attendance_f",
+  "soundset_filename": "attendance_f.wav",
+  "sounds": {
+    "0": {
+      "filename":"good_morning_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"attendance_please_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"thank_you_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"youre_welcome_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"good_bye_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"here_you_go_f.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"",
+      "image": "",
+      "description": ""
+    }
+  }
+}

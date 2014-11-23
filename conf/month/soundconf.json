@@ -1,0 +1,66 @@
+{
+  "soundset_name": "months",
+  "soundset_filename": "month.wav",
+  "sounds": {
+    "0": {
+      "filename":"january.wav",
+      "image": "",
+      "description": ""
+    },
+    "1": {
+      "filename":"february.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"march.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"april.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"may.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"june.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"july.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"august.wav",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"september.wav",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"october.wav",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"november.wav",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"december.wav",
+      "image": "",
+      "description": ""
+    }
+  }
+}

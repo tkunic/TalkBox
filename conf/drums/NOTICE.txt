@@ -1,0 +1,7 @@
+Last update: 2014-02-01
+
+Drum sounds came with BeetBox:
+https://github.com/scottgarner/BeetBox/tree/master/samples
+
+And the drum.wav file from:
+http://commons.wikimedia.org/wiki/File:En-us-drum.ogg
