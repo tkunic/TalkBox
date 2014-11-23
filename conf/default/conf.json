@@ -1,65 +1,63 @@
 {
-  "name": "hello.wav",
-  "sounds": {
-    "0": {
-      "filename":"need_suction.wav",
-      "image": "",
-      "description": ""
-    },
-    "1": {
-      "filename":"feel_sick.wav",
-      "image": "",
-      "description": ""
-    },
-    "2": {
-      "filename":"mouth_dry.wav",
-      "image": "",
-      "description": ""
-    },
-    "3": {
-      "filename":"need_help.wav",
-      "image": "",
-      "description": ""
-    },
-    "4": {
-      "filename":"need_break.wav",
-      "image": "",
-      "description": ""
-    },
-    "5": {
-      "filename":"upset.wav",
-      "image": "",
-      "description": ""
-    },
-    "6": {
-      "filename":"go_for_walk.wav",
-      "image": "",
-      "description": ""
-    },
-    "7": {
-      "filename":"need_washroom.wav",
-      "image": "",
-      "description": ""
-    },
-    "8": {
-      "filename":"like_more.wav",
-      "image": "",
-      "description": ""
-    },
-    "9": {
-      "filename":"too_noisy.wav",
-      "image": "",
-      "description": ""
-    },
-    "10": {
-      "filename":"",
-      "image": "",
-      "description": ""
-    },
     "11": {
-      "filename":"",
-      "image": "",
-      "description": ""
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/thank_you.wav"
+    }, 
+    "10": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/feel_sick.wav"
+    }, 
+    "12": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/youre_welcome.wav"
+    }, 
+    "name": "/home/pi/TalkBox/conf/default/hello.wav", 
+    "1": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/yes.wav"
+    }, 
+    "3": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/hello.wav"
+    }, 
+    "2": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/no.wav"
+    }, 
+    "5": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/need_break.wav"
+    }, 
+    "4": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/need_help.wav"
+    }, 
+    "7": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/need_washroom.wav"
+    }, 
+    "6": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/go_for_walk.wav"
+    }, 
+    "9": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/too_noisy.wav"
+    }, 
+    "8": {
+        "image": "", 
+        "description": "", 
+        "filename": "/home/pi/TalkBox/conf/default/like_more.wav"
     }
-  }
 }
