@@ -1,6 +1,7 @@
 import threading
 import logging
 import os
+import subprocess
 
 import re
 import json
@@ -21,27 +22,31 @@ num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
     """Contains one pin to soundfile mapping."""
-    def __init__(self, soundset_dir=os.path.join(conf_dir,'default'):
+    def __init__(self, soundset_dir=os.path.join(conf_dir,'default')):
         self.soundset_dir = soundset_dir
         self.conf_file = os.path.join(soundset_dir, 'conf.json')
+        self.conf = {}
         try:
             with open(self.conf_file, 'r') as fin:
                 self.conf = json.load(fin)
         except:
-            logging.error('Failed to read the conf file at %s' % conf_file)
+            logging.error('Failed to read the conf file at %s' % self.conf_file)
             self.play_sentence("Talk Box failed to load configuration. Please reboot or contact gamay lab.")
+            exit(1)
 
-        self.name_file = self.conf.name
-        self.name_sound = create_sound(self.name_file)
+        self.name_file = self.conf['name']
+        self.name_sound = self.create_sound(self.name_file)
 
         self.pins = {}
         for i in xrange(1,num_pins + 1):
             pin_conf = self.conf[str(i)]
             filename = pin_conf['filename']
-
             self.pins[i] = {}
             self.pins[i]['filename'] = filename
-            self.pins[i]['sound'] = self.create_sound(filename)
+            if filename != "":
+                self.pins[i]['sound'] = self.create_sound(filename)
+            else:
+                self.pins[i]['sound'] = None
 
         self.play_name()
 
@@ -54,7 +59,11 @@ class SoundSet():
         return self.pins[pin_num]['filename']
 
     def play_pin(self, pin_num):
-        self.pins[pin_num]['sound'].play()
+        sound = self.pins[pin_num]['sound']
+        if sound:
+            sound.play()
+        else:
+            logging.warning("Sound not set for pin %d" % pin_num)
 
     def get_name_file(self):
         return self.name_file
@@ -72,13 +81,8 @@ class SoundSet():
 
 
 class Upload:
-    def __init__(self):
-        self.sound_set = SoundSet() # create default soundset
-        # Start button_worker thread
-        self.button_thread = threading.Thread(name='button_worker', target=self.button_worker)
-        self.button_thread.start()
-
     def GET(self):
+        global sound_set
         web.header("Content-Type", "text/html; charset=utf-8")
 
         # TODO: Migrate to web.py templates
@@ -96,15 +100,16 @@ class Upload:
     <div class="pinnumber float-left">%d</div>
     <div class="filename float-left">%s</div>
     <div class="uploadbutton float-left">+<input type="file" name="%s" accept="audio/*" /></div>
-</div>""" % (i, os.path.basename(self.sound_set.get_pin_file(i)) if self.sound_set.get_pin_file(i) != '' else "No File", ''.join(['pinfile', i])))
+</div>""" % (i, os.path.basename(sound_set.get_pin_file(i)) if sound_set.get_pin_file(i) != '' else "No File", ''.join(['pinfile', str(i)])))
 
         result_list.append("""<input type="submit" value="Save" class="savebutton"/>
 </form>
 </body>
 </html>""")
-        return ''.join(result)
+        return ''.join(result_list)
 
     def POST(self):
+        global sound_set
         # TODO: this is silly, but didn't find a better way quickly enough.
         x = web.input(pinfile1={},pinfile2={},pinfile3={},pinfile4={},pinfile5={},pinfile6={},pinfile7={},pinfile8={},pinfile9={},pinfile10={},pinfile11={},pinfile12={})
         for filefield in x.keys():
@@ -113,45 +118,59 @@ class Upload:
             input_filename = input_filepath.split('/')[-1]
 
             # Write the uploaded file to filedir
+            file_destination_path = ''
             if input_filename is not None and input_filename != '':
                 # TODO: what if someone uploads blap.wav to pin 3 even though it
                 # is already on pin 2 and the blap.wav files are different despite
                 # the same name? Rename to blap(2).wav.
-                file_destination_path = os.path.join(self.sound_set.get_dir(), input_filename)
+                file_destination_path = os.path.join(sound_set.get_dir(), input_filename)
                 with open(file_destination_path, 'w') as fout:
                     fout.write(x.get(filefield).file.read())
                     fout.close()
 
-            # TODO: this is ugly beyond words. Gets last number in 'pinfileX' string
-            pin_num = re.compile('\d+').findall(filefield)[-1]
-            self.update_pin_config(pin_num, file_destination_path)
+            if file_destination_path != '':
+                # TODO: this is ugly beyond words. Gets last number in 'pinfileX' string
+                pin_num = re.compile('\d+').findall(filefield)[-1]
+                self.update_pin_config(pin_num, file_destination_path)
 
-        # TODO TODO TODO ============================================================
-        # END RUNNING button_worker! (poison pill?)
-        # START NEW button_worker!
-        # TODO TODO TODO ============================================================
+        # FIXME: Ensure no sounds are played while this is being changed.
+        sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
+        raise web.seeother('/')
 
     def update_pin_config(self, pin_num, file_name):
         # Update the configuration file with the new filenames.
         try:
-            with open(os.join(self.sound_set.get_dir(), 'conf.json'), 'w') as fout:
+            conf_file = os.path.join(sound_set.get_dir(), 'conf.json')
+            conf = None;
+
+            # Get current contents of config file
+            with open(conf_file, 'r') as fin:
+                conf = json.load(fin)
+
+            # Write updated config back
+            with open(conf_file, 'w') as fout:
+                conf[str(pin_num)]['filename'] = file_name
                 json.dump(conf, fout, indent=4)
 
         except Exception as e:
+            logging.error("ERROR: failed to write configuration due to: '%s'" % e.message)
             # TODO: actually display this in the browser as feedback to the user
-            self.sound_set.play_sentence("ERROR: failed to write configuration")
+            sound_set.play_sentence("ERROR: failed to write configuration")
 
-        raise web.seeother('/')
+class TalkBoxWeb(web.application):
+    def run(self, port=8080, *middleware):
+        func = self.wsgifunc(*middleware)
+        return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
-    def button_worker(self, sound_set):
-        while True:
-            if not GPIO.input(7): # Interupt pin is low
-                touchData = mpr121.readWordData(0x5a)
-                for i in xrange(num_pins):
-                    if (touchData & (1<<i)):
-                        self.sound_set.play_pin(i + 1)
+def button_worker():
+    while True:
+        if not GPIO.input(7) and not pygame.mixer.get_busy(): # Interupt pin is low and no sound is playing
+            touchData = mpr121.readWordData(0x5a)
+            for i in xrange(num_pins):
+                if (touchData & (1<<i)):
+                    sound_set.play_pin(i + 1)
 
 if __name__ == "__main__":
     # Init GPIO Interrupt Pin
@@ -167,8 +186,17 @@ if __name__ == "__main__":
     pygame.mixer.pre_init(44100, -16, 12, 512)
     pygame.init()
 
+    # FIXME: shouldn't be global, but short on time
+    sound_set = SoundSet()
+    button_thread = None
+
+    # Init button worker thread
+    button_thread = threading.Thread(name='button_worker', target=button_worker)
+    button_thread.start()
+
     # Init Web (which in turn inits buttons)
     # TODO: add further URLs, for example to test I2C and other statuses.
     urls = ('/', 'Upload')
-    app = web.application(urls, globals())
-    app.run()
+    app = TalkBoxWeb(urls, globals())
+    app.run(port=80)
+
