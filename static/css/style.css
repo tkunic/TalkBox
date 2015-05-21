@@ -1,0 +1,59 @@
+body
+{
+	height : 100%;
+}
+
+
+/* Style for Header Start */
+.nav ul {
+  list-style: none;
+  background-color: black;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.nav li {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2em;
+  line-height: 40px;
+  height: 40px;
+  border-bottom: 1px solid #888;
+}
+ 
+.nav a {
+  text-decoration: none;
+  color: #fff;
+  display: block;
+  transition: .3s background-color;
+  padding-right : 10px;
+  padding-left : 10px;
+}
+ 
+.nav a:hover {
+  background-color: white;
+  color: black;
+}
+ 
+.nav a.active {
+  background-color: white;
+  color: black;
+  cursor: default;
+}
+ 
+
+  .nav li {
+    width: auto;
+    border-bottom: none;
+	padding-left : 50px;
+	padding-right : 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.4em;
+  }
+ 
+  .nav li {
+    display: inline-block;
+    margin-right: -4px;
+  }
+ 
+/* Style for Header Start */

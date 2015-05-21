@@ -10,22 +10,22 @@ import json
 import pygame
 import web
 
-import RPi.GPIO as GPIO
-import mpr121
+# import RPi.GPIO as GPIO
+# import mpr121
 
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
-conf_dir = '/home/pi/TalkBox/conf'
+conf_dir = '/home/usman/Downloads/TalkBox-master/conf'
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
     """Contains one pin to soundfile mapping."""
-    def __init__(self, soundset_dir=os.path.join(conf_dir,'default')):
+    def __init__(self, soundset_dir=os.path.join(conf_dir,'month')):
         self.soundset_dir = soundset_dir
-        self.conf_file = os.path.join(soundset_dir, 'conf.json')
+        self.conf_file = os.path.join(soundset_dir, 'soundconf.json')
         self.conf = {}
         try:
             with open(self.conf_file, 'r') as fin:
@@ -35,7 +35,7 @@ class SoundSet():
             self.play_sentence("Talk Box failed to load configuration. Please reboot or contact gamay lab.")
             exit(1)
 
-        self.name_file = self.conf['name']
+        self.name_file = self.conf['soundset_filename']
         self.name_sound = self.create_sound(self.name_file)
 
         self.pins = {}
@@ -91,6 +91,29 @@ class Upload:
         result_list.append("""<html>
 <head>
     <link href="/static/style.css" type="text/css" rel="stylesheet">
+    <script src="/static/js/audiodisplay.js"></script>
+    <script src="/static/js/recorderjs/recorder.js"></script>
+    <script src="/static/js/main.js"></script>
+
+    <style>    
+    
+        canvas {    
+            background: #202020;        
+            box-shadow: 0px 0px 10px blue;
+        }
+        
+        #record.recording { 
+            background: red;
+            background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+            background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+            background: radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+        }
+        #save, #save img { height: 10vh; }
+        
+        #save[download] { opacity: 1;}   
+
+    </style>
+
 </head>
 <body>
 <img src="static/talkbox_logo.png" id="talkboxlogo">
@@ -99,8 +122,28 @@ class Upload:
         for i in xrange(1, num_pins + 1):
             result_list.append("""<div class="pinrow">
     <div class="pinnumber float-left">%d</div>
-    <div class="filename float-left">%s</div>
-    <div class="uploadbutton float-left">+<input type="file" name="%s" accept="audio/*" /></div>
+    <div class="filename float-left">%s</div>    
+
+    <table>
+        <tr>
+            <div class="uploadbutton float-left">+
+            <input type="file" name="%s" accept="audio/*" />
+            <td>            
+            <img id="record" href="#" src="/static/img/rsz_mic128.png" height="50" onclick="toggleRecording(this);">
+            </td>
+            <td>
+            <canvas id="analyser" height="20px"></canvas>            
+            </td>
+            </div>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+            <a id="save" href="#" ><canvas id="wavedisplay" style="display:none;" height="20px"></canvas> </a>            
+            </td>
+        </tr>
+    </table>
+    
 </div>""" % (i, os.path.basename(sound_set.get_pin_file(i)) if sound_set.get_pin_file(i) != '' else "No File", ''.join(['pinfile', str(i)])))
 
         result_list.append("""<input type="submit" value="Save" class="savebutton"/>
@@ -175,23 +218,23 @@ def handle_touch(channel):
 
 
 if __name__ == "__main__":
-    # Init GPIO Interrupt Pin
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    # # Init GPIO Interrupt Pin
+    # GPIO.setmode(GPIO.BOARD)
+    # GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    # Init mpr121 touch sensor
-    mpr121.TOU_THRESH = 0x30
-    mpr121.REL_THRESH = 0x33
-    mpr121.setup(0x5a)
+    # # Init mpr121 touch sensor
+    # mpr121.TOU_THRESH = 0x30
+    # mpr121.REL_THRESH = 0x33
+    # mpr121.setup(0x5a)
 
-    # Init Pygame
+    # # Init Pygame
     pygame.mixer.pre_init(44100, -16, 12, 512)
     pygame.init()
 
-    # FIXME: shouldn't be global, but short on time
+    # # FIXME: shouldn't be global, but short on time
     sound_set = SoundSet()
-    # Add callback to pin 7 (interrupt)
-    GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
+    # # Add callback to pin 7 (interrupt)
+    # GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
 
     # Init Web (which in turn inits buttons)
     # TODO: add further URLs, for example to test I2C and other statuses.

@@ -1,8 +1,7 @@
 {
-  "soundset_name": "months",
-  "soundset_filename": "month.wav",
-  "sounds": {
-    "0": {
+    "soundset_name": "months",
+    "soundset_filename": "month.wav",
+    "12": {
       "filename":"january.wav",
       "image": "",
       "description": ""
@@ -62,5 +61,4 @@
       "image": "",
       "description": ""
     }
-  }
 }
