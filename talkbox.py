@@ -82,29 +82,6 @@ class SoundSet():
 
 
 class RSound:
-    def POST(self):        
-        global sound_set
-        # TODO: this is silly, but didn't find a better way quickly enough.
-        x = web.input(sounds_list={})
-        slist = x.sounds_list
-        selected_file = slist
-
-        # Write the uploaded file to filedir
-        file_destination_path = ''
-        if selected_file is not None and selected_file != '':
-            # TODO: what if someone uploads blap.wav to pin 3 even though it
-            # is already on pin 2 and the blap.wav files are different despite
-            # the same name? Rename to blap(2).wav.
-            file_destination_path = os.path.join(os.path.basename("/sounds"), selected_file)
-            os.remove(file_destination_path)
-        
-        # FIXME: Ensure no sounds are played while this is being changed.
-        sound_set = SoundSet()
-
-        # TODO: Indicate to user that update has been successful.
-        raise web.seeother('/')
-
-class Upload:
     def GET(self):
         global sound_set
         web.header("Content-Type", "text/html; charset=utf-8")
@@ -139,35 +116,6 @@ class Upload:
         #save[download] { opacity: 1;}   
 
     </style>
-
-    <script type="text/javascript">
-
-    function home_clicked()
-    {
-        document.getElementById("h").className = "active";
-        document.getElementById("s").className = "";
-        document.getElementById("v").className = "";        
-        document.getElementById("ss").style.display = "none";        
-        document.getElementById("hh").style.display = "block";        
-    }
-
-    function sounds_clicked()
-    {
-        document.getElementById("s").className = "active";
-        document.getElementById("h").className = "";
-        document.getElementById("v").className = ""; 
-        document.getElementById("hh").style.display = "none";        
-        document.getElementById("ss").style.display = "block";        
-    }
-
-    function vocab_clicked()
-    {
-        document.getElementById("v").className = "active";
-        document.getElementById("s").className = "";
-        document.getElementById("h").className = "";    
-    }
-    </script>
-
 </head>
 <body>
 
@@ -180,38 +128,12 @@ class Upload:
         </center>
         <div class="nav">
           <ul>
-            <li class="home"><a id="h" href="#" onClick="home_clicked();">Home</a></li>
-            <li class="sounds"><a id="s" class="active" href="#" onClick="sounds_clicked();">Sound(s)</a></li>
-            <li class="vocabularies"><a id="v" href="#" onClick="vocab_clicked();">Vocabulary(s)</a></li>                    
+            <li class="home"><a id="h" href="/" >Home</a></li>
+            <li class="sounds"><a id="s" class="active" href="#" >Sound(s)</a></li>
+            <li class="vocabularies"><a id="v" href="/vocab" >Vocabulary(s)</a></li>                    
           </ul>
         </div>      
 </header>
-
-    
-    <div align="center" id="hh" style="display: none;">
-        <h3> HOT SWAPPABLE MULTI-LINGUAL VOCABULARY SETS FOR TALKBOX </h3>
-        <br />
-        
-        <p style="width:60%; text-align: justify; text-justify: inter-word;">
-            The <a href="http://link.springer.com/chapter/10.1007%2F978-3-319-08599-9_44">TalkBox</a> is a low cost Do-It-Yourself (DIY) form of Speech Generation Device (SGD). 
-            SGDs assist people who are functionally non-verbal with the ability to communicate through a means of vocabulary selection and 
-            speech synthesis.  In practice, obtaining a commercial SGD depends on successfully navigating several issues.  
-            These issues are numerous but are typically associated with finances and adaptability, or customizability.  
-            In general, SGD suffer from the same issues that other assistive technologies face - meaningful dissemination.  
-            The principles that normally keep our economies in check, do not typically apply to assistive technologies.  
-            That is, the achievement of economy of scale as a result of supply and demand is nearly impossible given the relative lack of demand. 
-            In Ontario, it could be years between when the needs of a particular student are identified and when the device is received. 
-            This means that the devices are not only hard to get but also less customizable and usable, since commercial products tend to 
-            follow a one-size-fits-all approach in order to achieve mass production.  That is, the vocabularies and physical makeup of the 
-            device is typically static and, as such, in danger of becoming physically or contextually irrelevant, and ultimately unusable. 
-            The TalkBox aims to bridge these gaps present in the current delivery of commercial SGDs. 
-        </p>
-
-        <footer>
-            <img src="/static/img/gamay_logo.png" alt="TalkBox" width="25%" height="15%" style="float:left; padding-top:15px;"/>
-            <img src="/static/img/yorku_logo.png" alt="TalkBox" width="25%" height="15%" style="float:right;padding-top:15px;"/>
-        </footer>
-    </div>
 
     <div align="center" id="ss">
 
@@ -220,7 +142,7 @@ class Upload:
             
             <div style="width:50%; float:left" align="center">
                 
-                <form method="POST" enctype="multipart/form-data" action="">
+                <form method="POST" enctype="multipart/form-data" action="/">
                 
                 <table>
 
@@ -262,7 +184,7 @@ class Upload:
 
         <div style="width:50%; float:right" align="center">
 
-                <form method="POST" action="/removesound">
+                <form method="POST" action="/sound">
                     <table>
                         <tr>
                             <td>
@@ -304,6 +226,91 @@ class Upload:
 </html>""")
         return ''.join(result_list)
 
+    def POST(self):        
+        global sound_set
+        # TODO: this is silly, but didn't find a better way quickly enough.
+        x = web.input(sounds_list={})
+        slist = x.sounds_list
+        selected_file = slist
+
+        # Write the uploaded file to filedir
+        file_destination_path = ''
+        if selected_file is not None and selected_file != '':
+            # TODO: what if someone uploads blap.wav to pin 3 even though it
+            # is already on pin 2 and the blap.wav files are different despite
+            # the same name? Rename to blap(2).wav.
+            file_destination_path = os.path.join(os.path.basename("/sounds"), selected_file)
+            os.remove(file_destination_path)
+        
+        # FIXME: Ensure no sounds are played while this is being changed.
+        sound_set = SoundSet()
+
+        # TODO: Indicate to user that update has been successful.
+        raise web.seeother('/sound')
+
+class Upload:
+    def GET(self):
+        global sound_set
+        web.header("Content-Type", "text/html; charset=utf-8")
+
+        # TODO: Migrate to web.py templates
+        result_list = []
+        result_list.append("""<html>
+<head>
+    <meta charset="utf-8">
+    <link href="/static/style.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />    
+
+</head>
+<body>
+
+<header>
+        <center>
+            <img src="/static/img/rsz_talkbox_logo.png" alt="TalkBox"/>
+            <font size="20px">
+                The TalkBox Project
+            </font>
+        </center>
+        <div class="nav">
+          <ul>
+            <li class="home"><a id="h" class="active" href="#" >Home</a></li>
+            <li class="sounds"><a id="s" href="/sound" >Sound(s)</a></li>
+            <li class="vocabularies"><a id="v" href="/vocab" >Vocabulary(s)</a></li>                    
+          </ul>
+        </div>      
+</header>
+
+    
+    <div align="center" id="hh">
+        <h3> HOT SWAPPABLE MULTI-LINGUAL VOCABULARY SETS FOR TALKBOX </h3>
+        <br />
+        
+        <p style="width:60%; text-align: justify; text-justify: inter-word;">
+            The <a href="http://link.springer.com/chapter/10.1007%2F978-3-319-08599-9_44">TalkBox</a> is a low cost Do-It-Yourself (DIY) form of Speech Generation Device (SGD). 
+            SGDs assist people who are functionally non-verbal with the ability to communicate through a means of vocabulary selection and 
+            speech synthesis.  In practice, obtaining a commercial SGD depends on successfully navigating several issues.  
+            These issues are numerous but are typically associated with finances and adaptability, or customizability.  
+            In general, SGD suffer from the same issues that other assistive technologies face - meaningful dissemination.  
+            The principles that normally keep our economies in check, do not typically apply to assistive technologies.  
+            That is, the achievement of economy of scale as a result of supply and demand is nearly impossible given the relative lack of demand. 
+            In Ontario, it could be years between when the needs of a particular student are identified and when the device is received. 
+            This means that the devices are not only hard to get but also less customizable and usable, since commercial products tend to 
+            follow a one-size-fits-all approach in order to achieve mass production.  That is, the vocabularies and physical makeup of the 
+            device is typically static and, as such, in danger of becoming physically or contextually irrelevant, and ultimately unusable. 
+            The TalkBox aims to bridge these gaps present in the current delivery of commercial SGDs. 
+        </p>
+
+        <footer>
+            <img src="/static/img/gamay_logo.png" alt="TalkBox" width="25%" height="15%" style="float:left; padding-top:15px;"/>
+            <img src="/static/img/yorku_logo.png" alt="TalkBox" width="25%" height="15%" style="float:right;padding-top:15px;"/>
+        </footer>
+    </div>
+
+</body>
+</html>""")
+        return ''.join(result_list)
+
     def POST(self):
         global sound_set
         # TODO: this is silly, but didn't find a better way quickly enough.
@@ -329,7 +336,7 @@ class Upload:
         sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
-        raise web.seeother('/')
+        raise web.seeother('/sound')
 
     def update_pin_config(self, pin_num, file_name):
         # Update the configuration file with the new filenames.
@@ -388,7 +395,8 @@ if __name__ == "__main__":
     # TODO: add further URLs, for example to test I2C and other statuses.
     urls = (
         '/', 'Upload',
-        '/removesound', 'RSound'
+        '/sound', 'RSound',
+        '/vocab', 'Vocabulary'
         )
     app = TalkBoxWeb(urls, globals())
     app.run(port=80)
