@@ -1,0 +1,64 @@
+  {
+    "vocabulary_name": "months",
+    "vocabulary_filename": "/home/pi/TalkBox/conf/month/month.wav",
+    "1": {
+      "filename":"/home/pi/TalkBox/conf/month/january.wav",
+      "image": "",
+      "description": ""
+    },
+    "2": {
+      "filename":"/home/pi/TalkBox/conf/month/february.wav",
+      "image": "",
+      "description": ""
+    },
+    "3": {
+      "filename":"/home/pi/TalkBox/conf/month/march.wav",
+      "image": "",
+      "description": ""
+    },
+    "4": {
+      "filename":"/home/pi/TalkBox/conf/month/april.wav",
+      "image": "",
+      "description": ""
+    },
+    "5": {
+      "filename":"/home/pi/TalkBox/conf/month/may.wav",
+      "image": "",
+      "description": ""
+    },
+    "6": {
+      "filename":"/home/pi/TalkBox/conf/month/june.wav",
+      "image": "",
+      "description": ""
+    },
+    "7": {
+      "filename":"/home/pi/TalkBox/conf/month/july.wav",
+      "image": "",
+      "description": ""
+    },
+    "8": {
+      "filename":"/home/pi/TalkBox/conf/month/august.wav",
+      "image": "",
+      "description": ""
+    },
+    "9": {
+      "filename":"/home/pi/TalkBox/conf/month/september.wav",
+      "image": "",
+      "description": ""
+    },
+    "10": {
+      "filename":"/home/pi/TalkBox/conf/month/october.wav",
+      "image": "",
+      "description": ""
+    },
+    "11": {
+      "filename":"/home/pi/TalkBox/conf/month/november.wav",
+      "image": "",
+      "description": ""
+    },
+    "12": {
+      "filename":"/home/pi/TalkBox/conf/month/december.wav",
+      "image": "",
+      "description": ""
+    }
+}

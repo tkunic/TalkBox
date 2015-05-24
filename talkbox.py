@@ -150,6 +150,15 @@ class Vocabulary:
             }
           }          
         }
+
+        // Selecting all items in my vocabulary for sending to server
+        function selectAllOptions(selStr)
+        {
+          var selObj = document.getElementById(selStr);
+          for (var i=0; i<selObj.options.length; i++) {
+            selObj.options[i].selected = true;
+          }
+        }
     </script>
 </head>
 <body>
@@ -207,7 +216,7 @@ class Vocabulary:
                 <table>
                 <tr>
                     <th>                    
-                    <form method="POST" action="/vocab_save">
+                    <form method="POST" action="/vocab" onsubmit="selectAllOptions('sel1');">
                         <table>
                             <tr>
                                 <td>You can choose up to 12 sounds</td>
@@ -231,13 +240,11 @@ class Vocabulary:
                             </tr>
                             <tr>
                                 <td>
-                                    <select name="sel1" size="10" >\n""")
+                                    <select id="sel1" name="sel1" size="10" multiple>\n""")
 
         for mysoundfile in os.listdir(os.path.basename("/sounds")):
             if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
-                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))
-            else:
-                print mysoundfile
+                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                     </select>
 
@@ -305,9 +312,7 @@ class Vocabulary:
 
         for mysoundfile in os.listdir(os.path.basename("/sounds")):
             if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
-                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))
-            else:
-                print mysoundfile
+                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                     </select>
 
@@ -332,24 +337,99 @@ class Vocabulary:
     def POST(self):        
         global sound_set
         # TODO: this is silly, but didn't find a better way quickly enough.
-        x = web.input(sounds_list={})
-        slist = x.sounds_list
-        selected_file = slist
+        x = web.input()        
+        r_id = x.rfid_no
+        rfid = r_id + ".json"
+        inp = web.input(sel1=[])
+        vocab_sounds = inp.sel1
 
         # Write the uploaded file to filedir
         file_destination_path = ''
-        if selected_file is not None and selected_file != '':
+        if rfid is not None and rfid != '':
             # TODO: what if someone uploads blap.wav to pin 3 even though it
             # is already on pin 2 and the blap.wav files are different despite
             # the same name? Rename to blap(2).wav.
-            file_destination_path = os.path.join(os.path.basename("/sounds"), selected_file)
-            os.remove(file_destination_path)
+
+            # reading the default json config first
+            default_conf = os.path.join(os.path.join(os.path.basename("/rfids"),"default"), 'default.json')
+            conf = None;
+
+            # Get current contents of default config file
+            with open(default_conf, 'r') as fin:
+                conf = json.load(fin)
+                fin.close()
+
+            # Now write this default config as new vocabulary            
+            file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
+            with open(file_destination_path, 'w') as fout:
+                json.dump(conf, fout, indent=4)
+                fout.close()
+
+            # Now updating the sound files for each pin
+            pins_index = 1
+            for sound in vocab_sounds:                
+                if sound != '':
+                    tmp_s = os.path.join(os.path.basename("/sounds"), sound)
+                    tmp_sound = os.path.abspath(tmp_s)
+                    self.update_pin_config(pins_index, tmp_sound, file_destination_path)
+                    pins_index = pins_index + 1
+
+            self.update_pin_meta(file_destination_path, r_id)
         
         # FIXME: Ensure no sounds are played while this is being changed.
         sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/vocab')
+
+    def update_pin_meta(self, vocab_conf, rfid):
+        # Update the configuration file with the new filenames.
+        try:
+            conf_file = vocab_conf
+            conf = None;
+            tmp_hello = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), "hello.wav")
+            hello = os.path.abspath(tmp_hello)
+
+            # Get current contents of config file
+            with open(conf_file, 'r') as fin:
+                conf = json.load(fin)
+                fin.close()
+
+            # Write updated config back
+            with open(conf_file, 'w') as fout:
+                conf['vocabulary_name'] = rfid
+                conf['vocabulary_filename'] = hello
+                json.dump(conf, fout, indent=4)
+                fout.close()
+
+
+        except Exception as e:
+            logging.error("ERROR: failed to write configuration due to: '%s'" % e.message)
+            # TODO: actually display this in the browser as feedback to the user
+            sound_set.play_sentence("ERROR: failed to write configuration")
+
+    def update_pin_config(self, pin_num, file_name, vocab_conf):
+        # Update the configuration file with the new filenames.
+        try:
+            conf_file = vocab_conf
+            conf = None;
+
+            # Get current contents of config file
+            with open(conf_file, 'r') as fin:
+                conf = json.load(fin)
+                fin.close()
+
+            # Write updated config back
+            with open(conf_file, 'w') as fout:
+                conf[str(pin_num)]['filename'] = file_name
+                json.dump(conf, fout, indent=4)
+                fout.close()
+
+
+        except Exception as e:
+            logging.error("ERROR: failed to write configuration due to: '%s'" % e.message)
+            # TODO: actually display this in the browser as feedback to the user
+            sound_set.play_sentence("ERROR: failed to write configuration")
 
 class RSound:
     def GET(self):
@@ -469,9 +549,7 @@ class RSound:
 
         for mysoundfile in os.listdir(os.path.basename("/sounds")):
             if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
-                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))
-            else:
-                print mysoundfile
+                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                 </select>
 
@@ -607,26 +685,7 @@ class Upload:
 
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/sound')
-
-    def update_pin_config(self, pin_num, file_name):
-        # Update the configuration file with the new filenames.
-        try:
-            conf_file = os.path.join(sound_set.get_dir(), 'conf.json')
-            conf = None;
-
-            # Get current contents of config file
-            with open(conf_file, 'r') as fin:
-                conf = json.load(fin)
-
-            # Write updated config back
-            with open(conf_file, 'w') as fout:
-                conf[str(pin_num)]['filename'] = file_name
-                json.dump(conf, fout, indent=4)
-
-        except Exception as e:
-            logging.error("ERROR: failed to write configuration due to: '%s'" % e.message)
-            # TODO: actually display this in the browser as feedback to the user
-            sound_set.play_sentence("ERROR: failed to write configuration")
+    
 
 class TalkBoxWeb(web.application):
     def run(self, port=8080, *middleware):
