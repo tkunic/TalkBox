@@ -81,6 +81,276 @@ class SoundSet():
         self.create_sound(sentence_file).play()
 
 
+class Vocabulary:
+    def GET(self):
+        global sound_set
+        web.header("Content-Type", "text/html; charset=utf-8")
+
+        # TODO: Migrate to web.py templates
+        result_list = []
+        result_list.append("""<html>
+<head>
+    <meta charset="utf-8">
+    <link href="/static/style.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />    
+
+    <script type="text/javascript">
+        
+        function addOption(theSel, theText, theValue)
+        {
+          var newOpt = new Option(theText, theValue);
+          var selLength = theSel.length;
+          theSel.options[selLength] = newOpt;
+        }
+
+        function deleteOption(theSel, theIndex)
+        { 
+          var selLength = theSel.length;
+          if(selLength>0)
+          {
+            theSel.options[theIndex] = null;
+          }
+        }
+
+        function moveOptions(theSelFrom, theSelTo)
+        {
+          var selLength = theSelFrom.length;
+          var selectedText = new Array();
+          var selectedValues = new Array();
+          var selectedCount = 0;
+          
+          var i;
+          
+          // Find the selected Options in reverse order
+          // and delete them from the 'from' Select.
+          for(i=selLength-1; i>=0; i--)
+          {
+            if(theSelFrom.options[i].selected)
+            {
+              selectedText[selectedCount] = theSelFrom.options[i].text;
+              selectedValues[selectedCount] = theSelFrom.options[i].value;
+              
+            if(!(theSelFrom.name == "sel2"))
+            {
+                deleteOption(theSelFrom, i);
+            }
+              selectedCount++;
+            }
+          }
+          
+          // Add the selected text/values in reverse order.
+          // This will add the Options to the 'to' Select
+          // in the same order as they were in the 'from' Select.
+          for(i=selectedCount-1; i>=0; i--)
+          {
+            if(!(theSelTo.name == "sel2"))
+            {
+                addOption(theSelTo, selectedText[i], selectedValues[i]);
+            }
+          }          
+        }
+    </script>
+</head>
+<body>
+
+<header>
+        <center>
+            <img src="/static/img/rsz_talkbox_logo.png" alt="TalkBox"/>
+            <font size="20px">
+                The TalkBox Project
+            </font>
+        </center>
+        <div class="nav">
+          <ul>
+            <li class="home"><a id="h" href="/" >Home</a></li>
+            <li class="sounds"><a id="s" href="/sound" >Sound(s)</a></li>
+            <li class="vocabularies"><a id="v" class="active" href="#" >Vocabulary(s)</a></li>                    
+          </ul>
+        </div>      
+</header>
+
+    <div align="center" id="ss">
+    <center> <h1>Vocabulary Files</h1> </center>
+
+        <div style="width:50%; float:left" align="center">
+            <form method="POST" action="/vocab_search">
+                
+                <table>
+
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                              <label>Enter RFID : </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="search_rfid" />
+                            </div>                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" class="btn btn-default" name="rfid_search" value="Search" />
+                        </td>
+                    </tr>
+
+                </table>        
+
+            </form>
+        </div>
+
+        <div style="width:50%; float:right" align="left">
+                
+                <table>
+                <tr>
+                    <th>                    
+                    <form method="POST" action="/vocab_save">
+                        <table>
+                            <tr>
+                                <td>You can choose up to 12 sounds</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                      <label>Enter RFID : </label>
+                                    </div>                                
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="rfid_no" />
+                                    </div>                            
+                                </td>                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label>My Vocabulary</label>                                      
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select name="sel1" size="10" >\n""")
+
+        for mysoundfile in os.listdir(os.path.basename("/sounds")):
+            if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
+                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))
+            else:
+                print mysoundfile
+        result_list.append("""        
+                                    </select>
+
+                                </td>                            
+                            </tr>                            
+                            <tr>
+                                <td>
+                                    <input type="submit" class="btn btn-default" name="add_rfid" value="Save" />
+                                </td>
+                            </tr>                            
+                            
+                        </table>                    
+                    </th>
+
+                    <th align="center" valign="middle" style="padding:20px;">
+                        <input type="button" value="--&gt;" class="btn btn-default" onclick="moveOptions(this.form.sel1, this.form.sel2);" />
+                        <br />
+                        <input type="button" value="&lt;--" class="btn btn-default" onclick="moveOptions(this.form.sel2, this.form.sel1);" />
+                    </th>
+
+                    <th>                    
+                        <table>
+                            <tr>
+                                <div class="form-group">
+                                      <label></label>
+                                    </div>                                
+                                    <div class="form-group">
+                                        
+                                    </div>                            
+                            </tr>
+                            <tr>
+                                <div class="form-group">
+                                      <label></label>
+                                    </div>                                
+                                    <div class="form-group">
+                                        
+                                    </div>                            
+                            </tr>
+                            <tr>
+                                <div class="form-group">
+                                      <label></label>
+                                    </div>                                
+                                    <div class="form-group">
+                                        
+                                    </div>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                      <label>List of All Sounds</label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <div class="form-group">
+                                      <label></label>
+                                    </div>                                
+                                    <div class="form-group">
+                                        
+                                    </div>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select name="sel2" size="10" >\n""")
+
+        for mysoundfile in os.listdir(os.path.basename("/sounds")):
+            if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
+                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))
+            else:
+                print mysoundfile
+        result_list.append("""        
+                                    </select>
+
+                                </td>                            
+                            </tr>
+                            <tr><td></td></tr>
+                            <tr><td></td></tr>
+                            <tr><td></td></tr>
+                        </table>
+
+                    </form>
+                    </th>
+                </tr>
+                </table>
+            </div>
+    </div>
+
+</body>
+</html>""")
+        return ''.join(result_list)
+
+    def POST(self):        
+        global sound_set
+        # TODO: this is silly, but didn't find a better way quickly enough.
+        x = web.input(sounds_list={})
+        slist = x.sounds_list
+        selected_file = slist
+
+        # Write the uploaded file to filedir
+        file_destination_path = ''
+        if selected_file is not None and selected_file != '':
+            # TODO: what if someone uploads blap.wav to pin 3 even though it
+            # is already on pin 2 and the blap.wav files are different despite
+            # the same name? Rename to blap(2).wav.
+            file_destination_path = os.path.join(os.path.basename("/sounds"), selected_file)
+            os.remove(file_destination_path)
+        
+        # FIXME: Ensure no sounds are played while this is being changed.
+        sound_set = SoundSet()
+
+        # TODO: Indicate to user that update has been successful.
+        raise web.seeother('/vocab')
+
 class RSound:
     def GET(self):
         global sound_set
