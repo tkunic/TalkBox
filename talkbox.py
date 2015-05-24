@@ -10,6 +10,9 @@ import json
 import pygame
 import web
 
+import time
+import sys
+
 # import RPi.GPIO as GPIO
 # import mpr121
 
@@ -18,14 +21,14 @@ logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
-conf_dir = '/home/usman/Downloads/TalkBox-master/conf'
+conf_dir = '/home/usman/Downloads/TalkBox-master/rfids'
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
     """Contains one pin to soundfile mapping."""
-    def __init__(self, soundset_dir=os.path.join(conf_dir,'month')):
+    def __init__(self, soundset_dir=os.path.join(conf_dir,'default')):
         self.soundset_dir = soundset_dir
-        self.conf_file = os.path.join(soundset_dir, 'soundconf.json')
+        self.conf_file = os.path.join(soundset_dir, 'default.json')
         self.conf = {}
         try:
             with open(self.conf_file, 'r') as fin:
@@ -35,7 +38,7 @@ class SoundSet():
             self.play_sentence("Talk Box failed to load configuration. Please reboot or contact gamay lab.")
             exit(1)
 
-        self.name_file = self.conf['soundset_filename']
+        self.name_file = self.conf['vocabulary_filename']
         self.name_sound = self.create_sound(self.name_file)
 
         self.pins = {}
@@ -50,6 +53,16 @@ class SoundSet():
                 self.pins[i]['sound'] = None
 
         self.play_name()
+
+
+        # with open('/dev/tty0', 'r') as tty:
+        #     while True:
+        #         RFID_input = tty.readline().rstrip()
+        #         if RFID_input == "123456789":
+        #             print "Access Granted" 
+        #             print "Read code from RFID reader:{0}".format(RFID_input)
+        #         else:
+        #             print "Access Denied"
 
     def create_sound(self, sound_file):
         sound = pygame.mixer.Sound(sound_file)
