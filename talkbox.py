@@ -100,7 +100,7 @@ class Vocabulary:
         function addOption(theSel, theText, theValue)
         {
           var newOpt = new Option(theText, theValue);
-          var selLength = theSel.length;
+          var selLength = theSel.length;          
           theSel.options[selLength] = newOpt;
         }
 
@@ -131,11 +131,11 @@ class Vocabulary:
               selectedText[selectedCount] = theSelFrom.options[i].text;
               selectedValues[selectedCount] = theSelFrom.options[i].value;
               
-            if(!(theSelFrom.name == "sel2"))
-            {
-                deleteOption(theSelFrom, i);
-            }
-              selectedCount++;
+                if(!(theSelFrom.name == "sel2"))
+                {
+                    deleteOption(theSelFrom, i);                    
+                }
+                selectedCount++;
             }
           }
           
@@ -144,7 +144,7 @@ class Vocabulary:
           // in the same order as they were in the 'from' Select.
           for(i=selectedCount-1; i>=0; i--)
           {
-            if(!(theSelTo.name == "sel2"))
+            if(!(theSelTo.name == "sel2") && (theSelTo.length < 12))
             {
                 addOption(theSelTo, selectedText[i], selectedValues[i]);
             }
