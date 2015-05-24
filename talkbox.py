@@ -242,9 +242,9 @@ class Vocabulary:
                                 <td>
                                     <select id="sel1" name="sel1" size="10" multiple>\n""")
 
-        for mysoundfile in os.listdir(os.path.basename("/sounds")):
-            if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
-                result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
+        # for mysoundfile in os.listdir(os.path.basename("/sounds")):
+        #     if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
+        #         result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                     </select>
 
@@ -345,7 +345,7 @@ class Vocabulary:
 
         # Write the uploaded file to filedir
         file_destination_path = ''
-        if rfid is not None and rfid != '':
+        if r_id is not None and r_id != '':
             # TODO: what if someone uploads blap.wav to pin 3 even though it
             # is already on pin 2 and the blap.wav files are different despite
             # the same name? Rename to blap(2).wav.
@@ -725,7 +725,8 @@ if __name__ == "__main__":
     urls = (
         '/', 'Upload',
         '/sound', 'RSound',
-        '/vocab', 'Vocabulary'
+        '/vocab', 'Vocabulary',
+        '/vocab_search', 'VocabularySearch',
         )
     app = TalkBoxWeb(urls, globals())
     app.run(port=80)
