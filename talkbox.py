@@ -13,15 +13,15 @@ import web
 import time
 import sys
 
-# import RPi.GPIO as GPIO
-# import mpr121
+import RPi.GPIO as GPIO
+import mpr121
 
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
-conf_dir = '/home/usman/Downloads/TalkBox-master/rfids'
+conf_dir = './rfids'
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
@@ -822,13 +822,13 @@ def handle_touch(channel):
 
 if __name__ == "__main__":
     # # Init GPIO Interrupt Pin
-    # GPIO.setmode(GPIO.BOARD)
-    # GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # # Init mpr121 touch sensor
-    # mpr121.TOU_THRESH = 0x30
-    # mpr121.REL_THRESH = 0x33
-    # mpr121.setup(0x5a)
+    mpr121.TOU_THRESH = 0x30
+    mpr121.REL_THRESH = 0x33
+    mpr121.setup(0x5a)
 
     # # Init Pygame
     pygame.mixer.pre_init(44100, -16, 12, 512)
@@ -837,7 +837,7 @@ if __name__ == "__main__":
     # # FIXME: shouldn't be global, but short on time
     sound_set = SoundSet()
     # # Add callback to pin 7 (interrupt)
-    # GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
+    GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
 
     # Init Web (which in turn inits buttons)
     # TODO: add further URLs, for example to test I2C and other statuses.
