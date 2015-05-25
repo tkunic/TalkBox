@@ -1,63 +1,63 @@
   {
     "vocabulary_name": "months",
-    "vocabulary_filename": "/home/pi/TalkBox/sounds/default/month.wav",
+    "vocabulary_filename": "month.wav",
     "1": {
-      "filename":"/home/pi/TalkBox/sounds/default/january.wav",
+      "filename":"january.wav",
       "image": "",
       "description": ""
     },
     "2": {
-      "filename":"/home/pi/TalkBox/sounds/default/february.wav",
+      "filename":"february.wav",
       "image": "",
       "description": ""
     },
     "3": {
-      "filename":"/home/pi/TalkBox/sounds/default/march.wav",
+      "filename":"march.wav",
       "image": "",
       "description": ""
     },
     "4": {
-      "filename":"/home/pi/TalkBox/sounds/default/april.wav",
+      "filename":"april.wav",
       "image": "",
       "description": ""
     },
     "5": {
-      "filename":"/home/pi/TalkBox/sounds/default/may.wav",
+      "filename":"may.wav",
       "image": "",
       "description": ""
     },
     "6": {
-      "filename":"/home/pi/TalkBox/sounds/default/june.wav",
+      "filename":"june.wav",
       "image": "",
       "description": ""
     },
     "7": {
-      "filename":"/home/pi/TalkBox/sounds/default/july.wav",
+      "filename":"july.wav",
       "image": "",
       "description": ""
     },
     "8": {
-      "filename":"/home/pi/TalkBox/sounds/default/august.wav",
+      "filename":"august.wav",
       "image": "",
       "description": ""
     },
     "9": {
-      "filename":"/home/pi/TalkBox/sounds/default/september.wav",
+      "filename":"september.wav",
       "image": "",
       "description": ""
     },
     "10": {
-      "filename":"/home/pi/TalkBox/sounds/default/october.wav",
+      "filename":"october.wav",
       "image": "",
       "description": ""
     },
     "11": {
-      "filename":"/home/pi/TalkBox/sounds/default/november.wav",
+      "filename":"november.wav",
       "image": "",
       "description": ""
     },
     "12": {
-      "filename":"/home/pi/TalkBox/sounds/default/december.wav",
+      "filename":"december.wav",
       "image": "",
       "description": ""
     }

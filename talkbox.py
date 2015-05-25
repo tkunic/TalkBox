@@ -39,12 +39,14 @@ class SoundSet():
             exit(1)
 
         self.name_file = self.conf['vocabulary_filename']
+        self.name_file = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), self.name_file)
         self.name_sound = self.create_sound(self.name_file)
 
         self.pins = {}
         for i in xrange(1,num_pins + 1):
             pin_conf = self.conf[str(i)]
             filename = pin_conf['filename']
+            filename = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), filename)
             self.pins[i] = {}
             self.pins[i]['filename'] = filename
             if filename != "":
@@ -53,6 +55,7 @@ class SoundSet():
                 self.pins[i]['sound'] = None
 
         self.play_name()
+        print self.name_file
 
 
         ###Actual RFID Scan loop to check if the vocabulary exist for the RFID or not...
