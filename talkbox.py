@@ -2,6 +2,7 @@
 
 import logging
 import os
+import inspect
 import subprocess
 
 import re
@@ -21,14 +22,20 @@ logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
-conf_dir = os.path.basename("/rfids")
+base_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+sounds_dir = base_dir + os.sep + "sounds"
+rfids_dir = base_dir + os.sep + "rfids"
+rfids_default = rfids_dir + os.sep + "default"
+sounds_default = sounds_dir + os.sep + "default"
+
+
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
     """Contains one pin to soundfile mapping."""
-    def __init__(self, soundset_dir=os.path.join(conf_dir,'default')):
+    def __init__(self, soundset_dir=rfids_default):
         self.soundset_dir = soundset_dir
-        self.conf_file = os.path.join(soundset_dir, 'default.json')
+        self.conf_file = rfids_default + os.sep + "default.json"
         self.conf = {}
         try:
             with open(self.conf_file, 'r') as fin:
@@ -39,14 +46,14 @@ class SoundSet():
             exit(1)
 
         self.name_file = self.conf['vocabulary_filename']
-        self.name_file = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), self.name_file)
+        self.name_file = sounds_default + os.sep + self.name_file
         self.name_sound = self.create_sound(self.name_file)
 
         self.pins = {}
         for i in xrange(1,num_pins + 1):
             pin_conf = self.conf[str(i)]
             filename = pin_conf['filename']
-            filename = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), filename)
+            filename = sounds_default + os.sep + filename
             self.pins[i] = {}
             self.pins[i]['filename'] = filename
             if filename != "":
@@ -90,14 +97,16 @@ class SoundSet():
 
         ####### For testing RFID Scan...
 
-        # with open('/dev/tty0', 'r') as tty:
-        #     while True:
-        #         RFID_input = tty.readline().rstrip()
-        #         conf = None
-        #         if RFID_input == "1234":
-        #             print "Grant Access!"
-        #         else:
-        #             print "Denied!"
+        with open('/dev/tty0', 'r') as tty:            
+            while True:
+                print "Listening RFID Scan..."
+                RFID_input = tty.readline().rstrip()
+                print RFID_input
+                conf = None
+                if RFID_input == "3559324163":
+                    print "Grant Access!"
+                else:
+                    print "Denied!"
 
     def create_sound(self, sound_file):
         sound = pygame.mixer.Sound(sound_file)
@@ -392,8 +401,8 @@ class Vocabulary:
                                 <td>
                                     <select name="sel2" size="10" >\n""")
 
-        for mysoundfile in os.listdir(os.path.basename("/sounds")):
-            if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
+        for mysoundfile in os.listdir(sounds_dir):
+            if os.path.isfile(sounds_dir + os.sep + mysoundfile):
                 result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                     </select>
@@ -433,7 +442,7 @@ class Vocabulary:
             # the same name? Rename to blap(2).wav.
 
             # reading the default json config first
-            default_conf = os.path.join(os.path.join(os.path.basename("/rfids"),"default"), 'default.json')
+            default_conf = rfids_default + os.sep + 'default.json'
             conf = None;
 
             # Get current contents of default config file
@@ -442,7 +451,7 @@ class Vocabulary:
                 fin.close()
 
             # Now write this default config as new vocabulary            
-            file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
+            file_destination_path = rfids_dir + os.sep + rfid
             with open(file_destination_path, 'w') as fout:
                 json.dump(conf, fout, indent=4)
                 fout.close()
@@ -451,7 +460,7 @@ class Vocabulary:
             pins_index = 1
             for sound in vocab_sounds:                
                 if sound != '':
-                    tmp_s = os.path.join(os.path.basename("/sounds"), sound)
+                    tmp_s = sounds_dir + os.sep + sound
                     tmp_sound = os.path.abspath(tmp_s)
                     self.update_pin_config(pins_index, tmp_sound, file_destination_path)
                     pins_index = pins_index + 1
@@ -473,7 +482,7 @@ class Vocabulary:
         try:
             conf_file = vocab_conf
             conf = None;
-            tmp_hello = os.path.join(os.path.join(os.path.basename("/sounds"),"default"), "hello.wav")
+            tmp_hello = sounds_default + os.sep + "hello.wav"
             hello = os.path.abspath(tmp_hello)
 
             # Get current contents of config file
@@ -529,10 +538,10 @@ class VocabularySearch:
         result = []
 
         if s_rfid is not None and s_rfid != '':
-            for rfid in os.listdir(os.path.basename("/rfids")):
-                if os.path.isfile(os.path.join(os.path.basename("/rfids"), rfid)):
+            for rfid in os.listdir(rfids_dir):
+                if os.path.isfile(rfids_dir + os.sep + rfid):
                     if s_rfid == rfid:
-                        file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
+                        file_destination_path = rfids_dir + os.sep + rfid
                         with open(file_destination_path, 'r') as fin:
                             conf = json.load(fin)
                             fin.close()
@@ -669,8 +678,8 @@ class ManageSound:
                             <td>
                                 <select name="sounds_list" size="10" >\n""")
 
-        for mysoundfile in os.listdir(os.path.basename("/sounds")):
-            if os.path.isfile(os.path.join(os.path.basename("/sounds"),mysoundfile)):
+        for mysoundfile in os.listdir(sounds_dir):
+            if os.path.isfile(sounds_dir + os.sep + mysoundfile):
                 result_list.append("""<option value="%s">%s</option>""" % (mysoundfile, mysoundfile))            
         result_list.append("""        
                                 </select>
@@ -709,7 +718,7 @@ class ManageSound:
             # TODO: what if someone uploads blap.wav to pin 3 even though it
             # is already on pin 2 and the blap.wav files are different despite
             # the same name? Rename to blap(2).wav.
-            file_destination_path = os.path.join(os.path.basename("/sounds"), selected_file)
+            file_destination_path = sounds_dir + os.sep + selected_file
             os.remove(file_destination_path)
         
         # FIXME: Ensure no sounds are played while this is being changed.
@@ -797,7 +806,7 @@ class UploadSound:
             # TODO: what if someone uploads blap.wav to pin 3 even though it
             # is already on pin 2 and the blap.wav files are different despite
             # the same name? Rename to blap(2).wav.
-            file_destination_path = os.path.join(os.path.basename("/sounds"), input_filename)
+            file_destination_path = sounds_dir + os.sep + input_filename
             with open(file_destination_path, 'w') as fout:
                 fout.write(store_sound.file.read())
                 fout.close()
