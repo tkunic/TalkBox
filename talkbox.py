@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
-conf_dir = './rfids'
+conf_dir = os.path.basename("/rfids")
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 
 class SoundSet():
