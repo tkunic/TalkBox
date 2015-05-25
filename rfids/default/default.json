@@ -1,63 +1,63 @@
   {
     "vocabulary_name": "months",
-    "vocabulary_filename": "/home/pi/TalkBox/conf/month/month.wav",
+    "vocabulary_filename": "/home/pi/TalkBox/sounds/default/month.wav",
     "1": {
-      "filename":"/home/pi/TalkBox/conf/month/january.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/january.wav",
       "image": "",
       "description": ""
     },
     "2": {
-      "filename":"/home/pi/TalkBox/conf/month/february.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/february.wav",
       "image": "",
       "description": ""
     },
     "3": {
-      "filename":"/home/pi/TalkBox/conf/month/march.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/march.wav",
       "image": "",
       "description": ""
     },
     "4": {
-      "filename":"/home/pi/TalkBox/conf/month/april.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/april.wav",
       "image": "",
       "description": ""
     },
     "5": {
-      "filename":"/home/pi/TalkBox/conf/month/may.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/may.wav",
       "image": "",
       "description": ""
     },
     "6": {
-      "filename":"/home/pi/TalkBox/conf/month/june.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/june.wav",
       "image": "",
       "description": ""
     },
     "7": {
-      "filename":"/home/pi/TalkBox/conf/month/july.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/july.wav",
       "image": "",
       "description": ""
     },
     "8": {
-      "filename":"/home/pi/TalkBox/conf/month/august.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/august.wav",
       "image": "",
       "description": ""
     },
     "9": {
-      "filename":"/home/pi/TalkBox/conf/month/september.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/september.wav",
       "image": "",
       "description": ""
     },
     "10": {
-      "filename":"/home/pi/TalkBox/conf/month/october.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/october.wav",
       "image": "",
       "description": ""
     },
     "11": {
-      "filename":"/home/pi/TalkBox/conf/month/november.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/november.wav",
       "image": "",
       "description": ""
     },
     "12": {
-      "filename":"/home/pi/TalkBox/conf/month/december.wav",
+      "filename":"/home/pi/TalkBox/sounds/default/december.wav",
       "image": "",
       "description": ""
     }

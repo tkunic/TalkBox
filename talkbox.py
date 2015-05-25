@@ -108,6 +108,9 @@ class Vocabulary:
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css" />    
 
+    <script src="/static/js/jquery-1.11.3.min.js"></script>
+    <script src="/static/js/jquery-migrate-1.2.1.min.js"></script>
+
     <script type="text/javascript">
         
         function addOption(theSel, theText, theValue)
@@ -172,6 +175,36 @@ class Vocabulary:
             selObj.options[i].selected = true;
           }
         }
+        
+        jQuery(document).ready(function() {
+            jQuery(".search_btn").click(function() {
+                    var input_string = $(".search_rid").val();                    
+                    jQuery.ajax({
+                            type: "POST",
+                            url: "/vocab_search",
+                            data: {search_rfid : input_string},
+                            success: function(data) {
+
+                                if(data == "NOT FOUND")
+                                {
+                                    document.getElementById('error_msg').innerHTML="Sorry, no record found for this RFID!";
+                                    document.getElementById('search_inp').value="";
+                                    var select = document.getElementById('sel1');
+                                    select.innerHTML = "";
+                                }
+                                else
+                                {                                    
+                                    var select = document.getElementById('sel1');
+                                    select.innerHTML = data;
+                                    document.getElementById('error_msg').innerHTML="";                                    
+                                    document.getElementById('search_inp').value=$(".search_rid").val();
+                                }
+                            }
+                            });
+                    return false;
+                    });
+        });
+
     </script>
 </head>
 <body>
@@ -196,7 +229,7 @@ class Vocabulary:
     <center> <h1>Vocabulary Files</h1> </center>
 
         <div style="width:50%; float:left" align="center">
-            <form method="POST" action="/vocab_search">
+            <form method="POST" action="#">
                 
                 <table>
 
@@ -208,20 +241,21 @@ class Vocabulary:
                         </td>
                         <td>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="search_rfid" />
+                                <input type="text" class="form-control search_rid" name="search_rfid" />
                             </div>                            
                         </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>
-                            <input type="submit" class="btn btn-default" name="rfid_search" value="Search" />
+                            <input type="submit" class="btn btn-default search_btn" name="rfid_search" value="Search" />
                         </td>
                     </tr>
 
                 </table>        
 
             </form>
+           <div id="error_msg" style="color:red; font-size:20px;"> </div>
         </div>
 
         <div style="width:50%; float:right" align="left">
@@ -240,7 +274,7 @@ class Vocabulary:
                                       <label>Enter RFID : </label>
                                     </div>                                
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="rfid_no" />
+                                        <input type="text" id="search_inp" class="form-control" name="rfid_no" />
                                     </div>                            
                                 </td>                                
                             </tr>
@@ -387,6 +421,10 @@ class Vocabulary:
                     self.update_pin_config(pins_index, tmp_sound, file_destination_path)
                     pins_index = pins_index + 1
 
+            while pins_index <= 12:
+                self.update_pin_config(pins_index, "", file_destination_path)
+                pins_index = pins_index + 1
+
             self.update_pin_meta(file_destination_path, r_id)
         
         # FIXME: Ensure no sounds are played while this is being changed.
@@ -444,7 +482,43 @@ class Vocabulary:
             # TODO: actually display this in the browser as feedback to the user
             sound_set.play_sentence("ERROR: failed to write configuration")
 
-class RSound:
+
+class VocabularySearch:    
+    def POST(self):
+        global sound_set
+        # TODO: this is silly, but didn't find a better way quickly enough.
+        x = web.input()
+        s_rfid = x.search_rfid
+        s_rfid = s_rfid + ".json"
+        conf = None
+        result = []
+
+        if s_rfid is not None and s_rfid != '':
+            for rfid in os.listdir(os.path.basename("/rfids")):
+                if os.path.isfile(os.path.join(os.path.basename("/rfids"), rfid)):
+                    if s_rfid == rfid:
+                        file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
+                        with open(file_destination_path, 'r') as fin:
+                            conf = json.load(fin)
+                            fin.close()
+
+                        self.pins = {}
+                        for i in xrange(1,num_pins + 1):
+                            pin_conf = conf[str(i)]
+                            fname = pin_conf['filename']
+                            head, filename = os.path.split(fname)
+                            if filename != "":
+                                result.append("""<option value="%s">%s</option>""" % (filename, filename))
+                                # result.append(filename)
+                        
+                        return ''.join(result)
+
+            result.append("NOT FOUND")
+            return ''.join(result)
+                
+        return ''
+
+class ManageSound:
     def GET(self):
         global sound_set
         web.header("Content-Type", "text/html; charset=utf-8")
@@ -609,7 +683,7 @@ class RSound:
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/sound')
 
-class Upload:
+class UploadSound:
     def GET(self):
         global sound_set
         web.header("Content-Type", "text/html; charset=utf-8")
@@ -736,8 +810,8 @@ if __name__ == "__main__":
     # Init Web (which in turn inits buttons)
     # TODO: add further URLs, for example to test I2C and other statuses.
     urls = (
-        '/', 'Upload',
-        '/sound', 'RSound',
+        '/', 'UploadSound',
+        '/sound', 'ManageSound',
         '/vocab', 'Vocabulary',
         '/vocab_search', 'VocabularySearch',
         )
