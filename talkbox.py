@@ -55,14 +55,46 @@ class SoundSet():
         self.play_name()
 
 
+        ###Actual RFID Scan loop to check if the vocabulary exist for the RFID or not...
+
         # with open('/dev/tty0', 'r') as tty:
         #     while True:
         #         RFID_input = tty.readline().rstrip()
-        #         if RFID_input == "123456789":
-        #             print "Access Granted" 
-        #             print "Read code from RFID reader:{0}".format(RFID_input)
+        #         conf = None
+                
+        #         if RFID_input is not None and RFID_input != '':
+        #             for rfid in os.listdir(os.path.basename("/rfids")):
+        #                 if os.path.isfile(os.path.join(os.path.basename("/rfids"), rfid)):
+        #                     if RFID_input == rfid:
+        #                         file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
+        #                         with open(file_destination_path, 'r') as fin:
+        #                             conf = json.load(fin)
+        #                             fin.close()
+
+        #                         self.pins = {}
+        #                         for k in xrange(1,num_pins + 1):
+        #                             pin_conf = conf[str(k)]
+        #                             filename = pin_conf['filename']
+        #                             self.pins[k] = {}
+        #                             self.pins[k]['filename'] = filename
+        #                             if filename != "":
+        #                                 self.pins[k]['sound'] = self.create_sound(filename)
+        #                             else:
+        #                                 self.pins[k]['sound'] = None
+
+        #                         self.play_name()
+
+
+        ####### For testing RFID Scan...
+
+        # with open('/dev/tty0', 'r') as tty:
+        #     while True:
+        #         RFID_input = tty.readline().rstrip()
+        #         conf = None
+        #         if RFID_input == "1234":
+        #             print "Grant Access!"
         #         else:
-        #             print "Access Denied"
+        #             print "Denied!"
 
     def create_sound(self, sound_file):
         sound = pygame.mixer.Sound(sound_file)
@@ -178,7 +210,7 @@ class Vocabulary:
         
         jQuery(document).ready(function() {
             jQuery(".search_btn").click(function() {
-                    var input_string = $(".search_rid").val();                    
+                    var input_string = $(".search_rid").val(); 
                     jQuery.ajax({
                             type: "POST",
                             url: "/vocab_search",
