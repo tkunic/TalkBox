@@ -97,16 +97,16 @@ class SoundSet():
 
         ####### For testing RFID Scan...
 
-        with open('/dev/tty0', 'r') as tty:            
-            while True:
-                print "Listening RFID Scan..."
-                RFID_input = tty.readline().rstrip()
-                print RFID_input
-                conf = None
-                if RFID_input == "3559324163":
-                    print "Grant Access!"
-                else:
-                    print "Denied!"
+        # with open('/dev/tty0', 'r') as tty:            
+        #     while True:
+        #         print "Listening RFID Scan..."
+        #         RFID_input = tty.readline().rstrip()
+        #         print RFID_input
+        #         conf = None
+        #         if RFID_input == "3559324163":
+        #             print "Grant Access!"
+        #         else:
+        #             print "Denied!"
 
     def create_sound(self, sound_file):
         sound = pygame.mixer.Sound(sound_file)
@@ -211,6 +211,18 @@ class Vocabulary:
           }          
         }
 
+        function done_pressed()
+        {
+            var selObj = document.getElementById("sel1");
+            if(selObj.options.length >= 1)
+            {
+                document.getElementById("row_to_hide").style.visibility = "visible";
+                document.getElementById("search_inp").focus();
+                document.getElementById('error_msg').innerHTML="";
+                document.getElementById('search_rid').value="";
+            }
+        }
+
         // Selecting all items in my vocabulary for sending to server
         function selectAllOptions(selStr)
         {
@@ -235,13 +247,15 @@ class Vocabulary:
                                     document.getElementById('search_inp').value="";
                                     var select = document.getElementById('sel1');
                                     select.innerHTML = "";
+                                    document.getElementById("row_to_hide").style.visibility = "hdden";
                                 }
                                 else
                                 {                                    
                                     var select = document.getElementById('sel1');
                                     select.innerHTML = data;
-                                    document.getElementById('error_msg').innerHTML="";                                    
+                                    document.getElementById('error_msg').innerHTML="";
                                     document.getElementById('search_inp').value=$(".search_rid").val();
+                                    document.getElementById("row_to_hide").style.visibility = "hdden";
                                 }
                             }
                             });
@@ -280,7 +294,7 @@ class Vocabulary:
                     <tr>
                         <td>
                             <div class="form-group">
-                              <label>Enter RFID : </label>
+                              <label>Scan RFID : </label>
                             </div>
                         </td>
                         <td>
@@ -306,22 +320,12 @@ class Vocabulary:
                 
                 <table>
                 <tr>
-                    <th>                    
+                    <td>                    
                     <form method="POST" action="/vocab" onsubmit="selectAllOptions('sel1');">
                         <table>
                             <tr>
                                 <td>You can choose up to 12 sounds</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="form-group">
-                                      <label>Enter RFID : </label>
-                                    </div>                                
-                                    <div class="form-group">
-                                        <input type="text" id="search_inp" class="form-control" name="rfid_no" />
-                                    </div>                            
-                                </td>                                
-                            </tr>
+                            </tr>                            
                             <tr>
                                 <td>
                                     <div class="form-group">                            
@@ -340,63 +344,41 @@ class Vocabulary:
                                     </select>
 
                                 </td>                            
-                            </tr>                            
+                            </tr>
                             <tr>
                                 <td>
+                                    <input type="button" class="btn btn-default" id="done_vocab" onclick="done_pressed();" value="Done" />
+                                </td>
+                            </tr>                            
+                            <tr id="row_to_hide" style="visibility:hidden;">
+                                <td>
+                                <div class="form-group">
+                                      <label>Scan RFID : </label>
+                                      <input type="text" id="search_inp" class="form-control" name="rfid_no" />
+                                </div>
                                     <input type="submit" class="btn btn-default" name="add_rfid" value="Save" />
                                 </td>
                             </tr>                            
                             
                         </table>                    
-                    </th>
+                    </td>
 
-                    <th align="center" valign="middle" style="padding:20px;">
+                    <td align="center" valign="middle" style="padding-right:20px; padding-bottom:90px;">
                         <input type="button" value="--&gt;" class="btn btn-default" onclick="moveOptions(this.form.sel1, this.form.sel2);" />
                         <br />
                         <input type="button" value="&lt;--" class="btn btn-default" onclick="moveOptions(this.form.sel2, this.form.sel1);" />
-                    </th>
+                    </td>
 
-                    <th>                    
+                    <td>                    
                         <table>
-                            <tr>
-                                <div class="form-group">
-                                      <label></label>
-                                    </div>                                
-                                    <div class="form-group">
-                                        
-                                    </div>                            
-                            </tr>
-                            <tr>
-                                <div class="form-group">
-                                      <label></label>
-                                    </div>                                
-                                    <div class="form-group">
-                                        
-                                    </div>                            
-                            </tr>
-                            <tr>
-                                <div class="form-group">
-                                      <label></label>
-                                    </div>                                
-                                    <div class="form-group">
-                                        
-                                    </div>                            
-                            </tr>
+                            
                             <tr>
                                 <td>
                                     <div class="form-group">
                                       <label>List of All Sounds</label>
                                     </div>
                                 </td>                            
-                            </tr>
-                            <tr>
-                                <div class="form-group">
-                                      <label></label>
-                                    </div>                                
-                                    <div class="form-group">
-                                        
-                                    </div>                            
-                            </tr>
+                            </tr>                            
                             <tr>
                                 <td>
                                     <select name="sel2" size="10" >\n""")
@@ -408,14 +390,60 @@ class Vocabulary:
                                     </select>
 
                                 </td>                            
+                            </tr>                            
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
                             </tr>
-                            <tr><td></td></tr>
-                            <tr><td></td></tr>
-                            <tr><td></td></tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">                            
+                                      <label> </label>
+                                    </div>
+                                </td>                            
+                            </tr>
                         </table>
 
                     </form>
-                    </th>
+                    </td>
                 </tr>
                 </table>
             </div>
@@ -471,8 +499,8 @@ class Vocabulary:
 
             self.update_pin_meta(file_destination_path, r_id)
         
-        # FIXME: Ensure no sounds are played while this is being changed.
-        sound_set = SoundSet()
+        # # FIXME: Ensure no sounds are played while this is being changed.
+        # sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/vocab')
@@ -721,8 +749,8 @@ class ManageSound:
             file_destination_path = sounds_dir + os.sep + selected_file
             os.remove(file_destination_path)
         
-        # FIXME: Ensure no sounds are played while this is being changed.
-        sound_set = SoundSet()
+        # # FIXME: Ensure no sounds are played while this is being changed.
+        # sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/sound')
@@ -811,8 +839,8 @@ class UploadSound:
                 fout.write(store_sound.file.read())
                 fout.close()
         
-        # FIXME: Ensure no sounds are played while this is being changed.
-        sound_set = SoundSet()
+        # # FIXME: Ensure no sounds are played while this is being changed.
+        # sound_set = SoundSet()
 
         # TODO: Indicate to user that update has been successful.
         raise web.seeother('/sound')
@@ -833,7 +861,7 @@ def handle_touch(channel):
 
 
 if __name__ == "__main__":
-    # # Init GPIO Interrupt Pin
+    # Init GPIO Interrupt Pin
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -846,9 +874,9 @@ if __name__ == "__main__":
     pygame.mixer.pre_init(44100, -16, 12, 512)
     pygame.init()
 
-    # # FIXME: shouldn't be global, but short on time
+    # FIXME: shouldn't be global, but short on time
     sound_set = SoundSet()
-    # # Add callback to pin 7 (interrupt)
+    # Add callback to pin 7 (interrupt)
     GPIO.add_event_detect(7, GPIO.FALLING, callback=handle_touch)
 
     # Init Web (which in turn inits buttons)
