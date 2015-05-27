@@ -11,18 +11,16 @@
 # Description: A simple script from www.stuffaboutcode.com which will start / stop a program a boot / shutdown.
 ### END INIT INFO
 
-
-PIDFILE=/var/run/talkboxd.pid
-
-   
-# If you want a command to always run, put it here
+# Global commands and variables
+PIDFILE=/var/tmp/talkboxd.pid
+PYDAEMONLOC=/home/pi/TalkBox/talkbox.py
  
-# Carry out specific functions when asked to by the system
+# Daemon control functions
 case "$1" in
 start)
 echo "Starting TalkBox..."
 # run application you want to start
-python /home/pi/TalkBox/talkbox.py &
+python $PYDAEMONLOC &
 echo "$!" >> $PIDFILE
 ;;
 stop)
