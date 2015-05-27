@@ -17,6 +17,10 @@ import sys
 import RPi.GPIO as GPIO
 import mpr121
 
+import threading
+
+import serial
+from evdev import InputDevice, categorize, ecodes
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
@@ -27,6 +31,7 @@ sounds_dir = base_dir + os.sep + "sounds"
 rfids_dir = base_dir + os.sep + "rfids"
 rfids_default = rfids_dir + os.sep + "default"
 sounds_default = sounds_dir + os.sep + "default"
+rfid_file_type = ".json"
 
 
 num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
@@ -34,79 +39,9 @@ num_pins = 12 # FIXME: kinda stuck at 12 due to Upload.POST
 class SoundSet():
     """Contains one pin to soundfile mapping."""
     def __init__(self, soundset_dir=rfids_default):
-        self.soundset_dir = soundset_dir
-        self.conf_file = rfids_default + os.sep + "default.json"
         self.conf = {}
-        try:
-            with open(self.conf_file, 'r') as fin:
-                self.conf = json.load(fin)
-        except:
-            logging.error('Failed to read the conf file at %s' % self.conf_file)
-            self.play_sentence("Talk Box failed to load configuration. Please reboot or contact gamay lab.")
-            exit(1)
-
-        self.name_file = self.conf['vocabulary_filename']
-        self.name_file = sounds_default + os.sep + self.name_file
-        self.name_sound = self.create_sound(self.name_file)
-
         self.pins = {}
-        for i in xrange(1,num_pins + 1):
-            pin_conf = self.conf[str(i)]
-            filename = pin_conf['filename']
-            filename = sounds_default + os.sep + filename
-            self.pins[i] = {}
-            self.pins[i]['filename'] = filename
-            if filename != "":
-                self.pins[i]['sound'] = self.create_sound(filename)
-            else:
-                self.pins[i]['sound'] = None
-
-        self.play_name()
-        print self.name_file
-
-
-        ###Actual RFID Scan loop to check if the vocabulary exist for the RFID or not...
-
-        # with open('/dev/tty0', 'r') as tty:
-        #     while True:
-        #         RFID_input = tty.readline().rstrip()
-        #         conf = None
-                
-        #         if RFID_input is not None and RFID_input != '':
-        #             for rfid in os.listdir(os.path.basename("/rfids")):
-        #                 if os.path.isfile(os.path.join(os.path.basename("/rfids"), rfid)):
-        #                     if RFID_input == rfid:
-        #                         file_destination_path = os.path.join(os.path.basename("/rfids"), rfid)
-        #                         with open(file_destination_path, 'r') as fin:
-        #                             conf = json.load(fin)
-        #                             fin.close()
-
-        #                         self.pins = {}
-        #                         for k in xrange(1,num_pins + 1):
-        #                             pin_conf = conf[str(k)]
-        #                             filename = pin_conf['filename']
-        #                             self.pins[k] = {}
-        #                             self.pins[k]['filename'] = filename
-        #                             if filename != "":
-        #                                 self.pins[k]['sound'] = self.create_sound(filename)
-        #                             else:
-        #                                 self.pins[k]['sound'] = None
-
-        #                         self.play_name()
-
-
-        ####### For testing RFID Scan...
-
-        # with open('/dev/tty0', 'r') as tty:            
-        #     while True:
-        #         print "Listening RFID Scan..."
-        #         RFID_input = tty.readline().rstrip()
-        #         print RFID_input
-        #         conf = None
-        #         if RFID_input == "3559324163":
-        #             print "Grant Access!"
-        #         else:
-        #             print "Denied!"
+        threading.Thread(target=RFIDScanner, args=(self,)).start()
 
     def create_sound(self, sound_file):
         sound = pygame.mixer.Sound(sound_file)
@@ -126,9 +61,6 @@ class SoundSet():
     def get_name_file(self):
         return self.name_file
 
-    def play_name(self):
-        self.name_sound.play()
-
     def get_dir(self):
         return self.soundset_dir
 
@@ -136,6 +68,58 @@ class SoundSet():
         sentence_file = '/tmp/tbsentence.wav'
         subprocess.Popen(['espeak', '"', sentence, '"', '-w', sentence_file], stdout=subprocess.PIPE)
         self.create_sound(sentence_file).play()
+
+    def set_sounds(self, configuration):
+        self.pins = {}
+        for k in xrange(1,num_pins + 1):
+            print 'setting pins'
+            pin_conf = configuration[str(k)]
+            filename = pin_conf['filename']
+            self.pins[k] = {}
+            self.pins[k]['filename'] = filename
+            if filename != "":
+                self.pins[k]['sound'] = self.create_sound(filename)
+            else:
+                self.pins[k]['sound'] = None
+
+
+def RFIDScanner(sound_controller):
+    # initialize data and input device
+    card_no = ''
+    dev = InputDevice('/dev/input/event2')
+    
+    # start input event loop
+    for event in dev.read_loop():
+        event_cat = categorize(event)
+        # check for keys only in the down state
+        if event.type == ecodes.EV_KEY and event_cat.keystate == 1:
+            # if newline then scanning is finished
+            # the RFID reader produces a newline at end of code
+            if event_cat.keycode == "KEY_ENTER":
+                RFID_input = card_no
+                RFID_input = RFID_input + rfid_file_type
+
+                # find appropriate files based on input code
+                if RFID_input is not None and RFID_input != '':
+                    for rfid in os.listdir(rfids_dir):
+                        if os.path.isfile(rfids_dir + os.sep + rfid):
+                            if RFID_input == rfid:
+                                file_destination_path = rfids_dir + os.sep + rfid
+                                with open(file_destination_path, 'r') as fin:
+                                    conf = json.load(fin)
+                                    fin.close()
+                                    sound_controller.set_sounds(conf)
+
+                # reset for later swaps  
+                card_no = ''
+            else:
+                # keep appending keys
+                key = event_cat.keycode
+                key = key.replace('KEY_', '')
+                card_no = card_no + key
+
+        
+
 
 
 class Vocabulary:
@@ -458,7 +442,7 @@ class Vocabulary:
         # TODO: this is silly, but didn't find a better way quickly enough.
         x = web.input()        
         r_id = x.rfid_no
-        rfid = r_id + ".json"
+        rfid = r_id + rfid_file_type
         inp = web.input(sel1=[])
         vocab_sounds = inp.sel1
 
@@ -855,7 +839,7 @@ class TalkBoxWeb(web.application):
 def handle_touch(channel):
     touchData = mpr121.readWordData(0x5a)
     if not pygame.mixer.get_busy(): # if no sound is playing
-        for i in xrange(num_pins):
+        for i in xrange(len(sound_set.pins)):
             if (touchData & (1<<i)):
                 sound_set.play_pin(i + 1)
 
