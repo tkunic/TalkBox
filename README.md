@@ -25,4 +25,4 @@ You'll also need these [instructions](http://www.tkunic.me/TalkBox/setup/).
 
 ## Awards
 
-TalkBox was a finalist in the 2014 Innovative Designs for Accessibility (IDeA) Competition.
+TalkBox was a finalist in the [2014 Innovative Designs for Accessibility (IDeA) Competition](http://www.accessiblecampus.ca/idea/idea-2014/).
