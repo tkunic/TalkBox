@@ -4,7 +4,7 @@ The goal of the TalkBox project is to develop an open-source, open-hardware Spee
 
 Please see [here](http://tkunic.github.io/TalkBox) for setup instructions and details.
 
-The `mpr121.py` file is derived from Scott Garner's [Beetbox](http://scott.j38.net/interactive/beetbox/) project, which is in turn based on [an Arduino example by Jim Lindblom](http://bildr.org/2011/05/mpr121_arduino/). The old TalkBox repo can be found [here](https://github.com/hrairhlessil/TalkBox).
+The `mpr121.py` file is derived from Scott Garner's [Beetbox](http://scott.j38.net/interactive/beetbox/) project, which is in turn based on [an Arduino example](http://bildr.org/2011/05/mpr121_arduino/) by Jim Lindblom. The old TalkBox repository can be found [here](https://github.com/hrairhlessil/TalkBox).
 
 ## Build one!
 
@@ -22,6 +22,10 @@ You'll also need these [instructions](http://www.tkunic.me/TalkBox/setup/).
 
 - [Hamidi, Foad, Melanie Baljko, Toni Kunic, and Ray Feraday. "Do-It-Yourself (DIY) assistive technology: a communication board case study." 14th International Conference, ICCHP, pp. 287-294. Springer, Cham, 2014.](https://link.springer.com/chapter/10.1007%2F978-3-319-08599-9_44)
 - [Hamidi, Foad, Melanie Baljko, Toni Kunic, and Ray Feraday. "TalkBox: a DIY communication board case study." Journal of Assistive Technologies 9, no. 4 (2015): 187-198.](http://www.emeraldinsight.com/doi/abs/10.1108/JAT-10-2014-0027)
+
+## Workshops
+
+In collaboration with the [Tetra Society of North America](http://www.tetrasociety.org/), the GaMaY lab conducted a [free workshop](http://talkbox.apps01.yorku.ca/?page_id=4890) at the [2014 Toronto Mini Maker Faire](http://makerfairetoronto.com/), in which we helped children with disabilities make and customize their very own TalkBox.
 
 ## Awards
 
