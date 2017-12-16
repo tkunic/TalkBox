@@ -29,4 +29,5 @@ In collaboration with the [Tetra Society of North America](http://www.tetrasocie
 
 ## Awards
 
-TalkBox was a finalist in the [2014 Innovative Designs for Accessibility (IDeA) Competition](http://www.accessiblecampus.ca/idea/idea-2014/).
+- [2014 Bridge the Gap Award Winner](http://eecs.lassonde.yorku.ca/news/lassonde-talkbox-team-wins-top-prize-at-toronto-maker-faire/).
+- [2014 Innovative Designs for Accessibility (IDeA) Competition Finalist](http://www.accessiblecampus.ca/idea/idea-2014/).
