@@ -31,3 +31,7 @@ In collaboration with the [Tetra Society of North America](http://www.tetrasocie
 
 - [2014 Bridge the Gap Award Winner](http://eecs.lassonde.yorku.ca/news/lassonde-talkbox-team-wins-top-prize-at-toronto-maker-faire/).
 - [2014 Innovative Designs for Accessibility (IDeA) Competition Finalist](http://www.accessiblecampus.ca/idea/idea-2014/).
+
+## Interviews
+
+- [Interview in Toronto Star](https://www.youtube.com/watch?v=EXKxC0_Ueec)
