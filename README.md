@@ -1,6 +1,6 @@
 # TalkBox
 
-The goal of the TalkBox project is to develop an open-source, open-hardware Speech Generating Device (aka "SGD"). The project has been undertaken by faculty and students from the GaMaY Lab, in the Lassonde School of Engineering at York University, in collaboration with community partners.
+The goal of the TalkBox project is to develop an open-source, open-hardware Speech Generating Device (SGD). It provides non-verbal students in special education a way to build a low-cost, easily configurable SGD with the help of their teacher. The TalkBox project has been developed as a collaboration between the GaMaY Lab at the Lassonde School of Engineering, Ray Feraday and myself.
 
 Please see [here](http://tkunic.github.io/TalkBox) for setup instructions and details.
 
