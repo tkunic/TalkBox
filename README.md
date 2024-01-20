@@ -2,7 +2,7 @@
 
 The goal of the TalkBox project is to develop an open-source, open-hardware Speech Generating Device (SGD). It provides non-verbal students in special education a way to build a low-cost, easily configurable SGD with the help of their teacher. The TalkBox project has been developed as a collaboration between the [GaMaY Lab](http://gamay.lab.yorku.ca/) at the Lassonde School of Engineering, [Ray Feraday](https://twitter.com/rayferaday) and myself.
 
-Please see [here](http://tkunic.github.io/TalkBox) for setup instructions and details.
+Please see [here](https://piet.apps01.yorku.ca/lab-initiative/the-talkbox-project/) for setup instructions and details.
 
 The `mpr121.py` file is derived from Scott Garner's [Beetbox](http://scott.j38.net/interactive/beetbox/) project, which is in turn based on [an Arduino example](http://bildr.org/2011/05/mpr121_arduino/) by Jim Lindblom. The old TalkBox repository can be found [here](https://github.com/hrairhlessil/TalkBox).
 
@@ -15,8 +15,6 @@ You'll need the following materials:
 - Some header pins and wires.
 - A small speaker.
 - As many arts and crafts materials as you like!
-
-You'll also need these [instructions](http://www.tkunic.me/TalkBox/setup/).
 
 ## Publications
 
